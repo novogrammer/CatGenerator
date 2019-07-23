@@ -2,3 +2,9 @@
 body{
   background:#cfc;
 }
+
+#View{
+  position:fixed;
+  left:0;
+  top:0;
+}
