@@ -27,16 +27,25 @@ export default class App{
     let camera=new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 1000 );
     this.three={renderer,scene,camera};
 
-
-    //var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    var geometry=new TeapotBufferGeometry(1);
-    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    let noise=this.makeNoise();
+    var texture = new THREE.TextureLoader().load( '/cat/'+noise );
+    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    //var geometry=new TeapotBufferGeometry(1);
+    //var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    var material = new THREE.MeshBasicMaterial( { map: texture } );
     var mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
     
+    setInterval(()=>{
+      let noise=this.makeNoise();
+      var texture = new THREE.TextureLoader().load( '/cat/'+noise );
+      mesh.material.map=texture;
+    },1000)
+    
     this.three.mesh=mesh;
 
-    camera.position.z = 5;
+    camera.position.set(0,2,5);
+    camera.lookAt(new THREE.Vector3(0,0,0));
 
   }
   setupStats(){
@@ -69,7 +78,7 @@ export default class App{
     let {renderer,scene,camera,mesh}=this.three;
     //console.log(performance.now());
 
-    mesh.rotation.x += 0.01;
+    //mesh.rotation.x += 0.01;
     mesh.rotation.y += 0.01;
     renderer.render( scene, camera );
   }
