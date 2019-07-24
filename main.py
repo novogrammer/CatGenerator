@@ -4,6 +4,9 @@ import tensorflow as tf
 import numpy as np
 import imageio
 import time
+import mimetypes
+
+mimetypes.add_type('application/wasm','.wasm')
 
 #$ pip freeze > requirements.txt
 #$ pip install -r requirements.txt
