@@ -7,17 +7,18 @@ from keras.backend import tensorflow_backend
 
 import numpy as np
 
-np.random.seed(0)
-np.random.RandomState(0)
-tf.set_random_seed(0)
-
-config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
-session = tf.Session(config=config)
-tensorflow_backend.set_session(session)
 
 
 class DCGAN():
-    def __init__(self):
+    def __init__(self,disable_gpu=False):
+        if disable_gpu:
+            config = tf.ConfigProto(device_count={"GPU":0})
+            session = tf.Session(config=config)
+            tensorflow_backend.set_session(session)
+        else:
+            config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
+            session = tf.Session(config=config)
+            tensorflow_backend.set_session(session)
 
         self.z_dim = 100
         self.generator = self.build_generator()

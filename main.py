@@ -9,10 +9,9 @@ import time
 #$ pip install -r requirements.txt
 
 app=Flask(__name__,static_folder='assets')
-dcgan = DCGAN()
+dcgan = DCGAN(disable_gpu=True)
 
 dcgan.generator.load_weights("ganmodels/dcgan-cat.h5")
-np.random.seed(int(time.time()))
 global graph
 graph = tf.get_default_graph()
 
@@ -55,5 +54,5 @@ def predict(noise):
 
 
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run(debug=True,host="0.0.0.0")
 
