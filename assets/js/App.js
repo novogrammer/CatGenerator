@@ -5,26 +5,27 @@ import {
 } from "./constants.js";
 
 import * as THREE from "./three/build/three.module.js";
-import {TeapotBufferGeometry} from "./three/examples/jsm/geometries/TeapotBufferGeometry.js"
 import {OrbitControls} from "./three/examples/jsm/controls/OrbitControls.js";
 
 //let THREE=Object.assign(Object.assign({},T),{TeapotBufferGeometry});
 
 import Stats from "./stats/stats.module.js";
 
+import AmmoToThreeUpdater from "./AmmoToThreeUpdater.js";
+
+
 export default class App{
   constructor(){
+    this.updaters=[];
     this.setupThree();
     this.setupAmmo();
     this.setupStats();
     this.setupEvents();
-    /*
-    let noise=this.makeNoise();
-    console.log(noise);
-    let $img=$("<img>");
-    $img.attr("src","/cat/"+noise);
-    $("#Main").append($img);
-    */
+    
+    this.spawn();
+    setInterval(()=>{
+      this.spawn();
+    },1000);
   }
   setupThree(){
     let renderer=new THREE.WebGLRenderer({canvas:$("#View")[0]});
@@ -32,25 +33,8 @@ export default class App{
     let camera=new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 1000 );
     this.three={renderer,scene,camera};
 
-    let noise=this.makeNoise();
-    var texture = new THREE.TextureLoader().load( '/cat/'+noise );
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    //var geometry=new TeapotBufferGeometry(1);
-    //var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-    var material = new THREE.MeshBasicMaterial( { map: texture } );
-    var mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(0,2,0);
-    scene.add( mesh );
     
-    /*
-    setInterval(()=>{
-      let noise=this.makeNoise();
-      var texture = new THREE.TextureLoader().load( '/cat/'+noise );
-      mesh.material.map=texture;
-    },1000)
-    */
     
-    this.three.mesh=mesh;
     
     let controls = new OrbitControls( camera, renderer.domElement );
     controls.target.set(0,2,0);
@@ -87,56 +71,9 @@ export default class App{
       ground.setFriction(1);
       physicsWorld.addRigidBody(ground);
     }
-    let body=null;
-    /*
-    {
-      let pos=new Ammo.btVector3(0,5,0);
-      let radius=1;
-      let mass=1;
-      let transform=new Ammo.btTransform();
-      transform.setIdentity();
-      transform.setOrigin(pos);
-      let sphereShape=new Ammo.btSphereShape(radius);
-      let localInertia=new Ammo.btVector3(0,0,0);
-      sphereShape.calculateLocalInertia(mass,localInertia);
-      
-      
-      body=new Ammo.btRigidBody(
-        new Ammo.btRigidBodyConstructionInfo(
-          mass,
-          new Ammo.btDefaultMotionState(transform),
-          sphereShape,
-          localInertia
-        )
-      );
-      physicsWorld.addRigidBody(body);
-    }
-    */
-    {
-      let pos=new Ammo.btVector3(0,5,0);
-      let size=new Ammo.btVector3(5,1,5);
-      let mass=1;
-      let transform=new Ammo.btTransform();
-      transform.setIdentity();
-      transform.setOrigin(pos);
-      let shape=new Ammo.btBoxShape(size);
-      let localInertia=new Ammo.btVector3(0,0,0);
-      shape.calculateLocalInertia(mass,localInertia);
-      
-      
-      body=new Ammo.btRigidBody(
-        new Ammo.btRigidBodyConstructionInfo(
-          mass,
-          new Ammo.btDefaultMotionState(transform),
-          shape,
-          localInertia
-        )
-      );
-      physicsWorld.addRigidBody(body);
-    }
     
     
-    this.ammo={physicsWorld,body};
+    this.ammo={physicsWorld};
   }
   setupStats(){
     this.stats=new Stats();
@@ -158,6 +95,41 @@ export default class App{
     this.onResize();
     
   }
+  spawn(){
+    let noise=this.makeNoise();
+    var texture = new THREE.TextureLoader().load( '/cat/'+noise );
+    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    //var geometry=new TeapotBufferGeometry(1);
+    //var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    var material = new THREE.MeshBasicMaterial( { map: texture } );
+    var mesh = new THREE.Mesh( geometry, material );
+    mesh.position.set(0,2,0);
+    
+    let pos=new Ammo.btVector3(Math.random()*10-5,5,0);
+    let size=new Ammo.btVector3(0.5,0.5,0.5);
+    let mass=1;
+    let transform=new Ammo.btTransform();
+    transform.setIdentity();
+    transform.setOrigin(pos);
+    let shape=new Ammo.btBoxShape(size);
+    let localInertia=new Ammo.btVector3(0,0,0);
+    shape.calculateLocalInertia(mass,localInertia);
+    
+    
+    let body=new Ammo.btRigidBody(
+      new Ammo.btRigidBodyConstructionInfo(
+        mass,
+        new Ammo.btDefaultMotionState(transform),
+        shape,
+        localInertia
+      )
+    );
+    let {scene}=this.three;
+    let {physicsWorld}=this.ammo;
+    
+    let updater=new AmmoToThreeUpdater({world:physicsWorld,body:body,scene:scene,object3d:mesh});
+    this.updaters.push(updater);
+  }
   onResize(){
     let {renderer,scene,camera}=this.three;
     renderer.setSize(window.innerWidth,window.innerHeight);
@@ -170,26 +142,20 @@ export default class App{
     //console.log(performance.now());
 
     physicsWorld.stepSimulation( 1/FPS, 10 );
-    let transform=new Ammo.btTransform();
-    body.getMotionState().getWorldTransform(transform);
     
-    mesh.position.set(transform.getOrigin().x(),transform.getOrigin().y(),transform.getOrigin().z());
-    mesh.quaternion.set(
-      transform.getRotation().x(),
-      transform.getRotation().y(),
-      transform.getRotation().z(),
-      transform.getRotation().w()
-    );
+    for(let updater of this.updaters){
+      updater.update();
+    }
+    let newUpdaters=[];
+    for(let updater of this.updaters){
+      if(0<updater.object3d.position.y){
+        newUpdaters.push(updater);
+      }else{
+        updater.destroy();
+      }
+    }
+    this.updaters=newUpdaters;
     
-    //mesh.rotation.x += 0.01;
-    //mesh.rotation.y += 0.01;
-    /*
-    console.log("sphere pos = " + 
-        [trans.getOrigin().x().toFixed(2), 
-         trans.getOrigin().y().toFixed(2), 
-         trans.getOrigin().z().toFixed(2)]
-    );
-    */
     controls.update();
     renderer.render( scene, camera );
   }
