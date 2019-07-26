@@ -39,6 +39,7 @@ export default class App{
     //var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
     var material = new THREE.MeshBasicMaterial( { map: texture } );
     var mesh = new THREE.Mesh( geometry, material );
+    mesh.position.set(0,2,0);
     scene.add( mesh );
     
     /*
@@ -50,9 +51,15 @@ export default class App{
     */
     
     this.three.mesh=mesh;
-
+    
+    let controls = new OrbitControls( camera, renderer.domElement );
+    controls.target.set(0,2,0);
     camera.position.set(0,2,5);
-    camera.lookAt(new THREE.Vector3(0,0,0));
+    
+    this.three.controls=controls;
+
+    //camera.position.set(0,2,5);
+    //camera.lookAt(new THREE.Vector3(0,2,0));
 
   }
   setupAmmo(){
@@ -80,32 +87,56 @@ export default class App{
       ground.setFriction(1);
       physicsWorld.addRigidBody(ground);
     }
-    let sphere=null;
+    let body=null;
+    /*
     {
-      let pos=new Ammo.btVector3(0,15,0);
+      let pos=new Ammo.btVector3(0,5,0);
       let radius=1;
       let mass=1;
-      let form=new Ammo.btTransform();
-      form.setIdentity();
-      form.setOrigin(pos);
+      let transform=new Ammo.btTransform();
+      transform.setIdentity();
+      transform.setOrigin(pos);
       let sphereShape=new Ammo.btSphereShape(radius);
       let localInertia=new Ammo.btVector3(0,0,0);
       sphereShape.calculateLocalInertia(mass,localInertia);
       
       
-      sphere=new Ammo.btRigidBody(
+      body=new Ammo.btRigidBody(
         new Ammo.btRigidBodyConstructionInfo(
           mass,
-          new Ammo.btDefaultMotionState(form),
+          new Ammo.btDefaultMotionState(transform),
           sphereShape,
           localInertia
         )
       );
-      physicsWorld.addRigidBody(sphere);
+      physicsWorld.addRigidBody(body);
+    }
+    */
+    {
+      let pos=new Ammo.btVector3(0,5,0);
+      let size=new Ammo.btVector3(5,1,5);
+      let mass=1;
+      let transform=new Ammo.btTransform();
+      transform.setIdentity();
+      transform.setOrigin(pos);
+      let shape=new Ammo.btBoxShape(size);
+      let localInertia=new Ammo.btVector3(0,0,0);
+      shape.calculateLocalInertia(mass,localInertia);
+      
+      
+      body=new Ammo.btRigidBody(
+        new Ammo.btRigidBodyConstructionInfo(
+          mass,
+          new Ammo.btDefaultMotionState(transform),
+          shape,
+          localInertia
+        )
+      );
+      physicsWorld.addRigidBody(body);
     }
     
     
-    this.ammo={physicsWorld,sphere};
+    this.ammo={physicsWorld,body};
   }
   setupStats(){
     this.stats=new Stats();
@@ -134,15 +165,24 @@ export default class App{
     camera.updateProjectionMatrix();
   }
   onTick(){
-    let {renderer,scene,camera,mesh}=this.three;
-    let {physicsWorld,sphere}=this.ammo;
+    let {renderer,scene,camera,mesh,controls}=this.three;
+    let {physicsWorld,body}=this.ammo;
     //console.log(performance.now());
 
-    //mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.01;
     physicsWorld.stepSimulation( 1/FPS, 10 );
-    let trans=new Ammo.btTransform();
-    sphere.getMotionState().getWorldTransform(trans);
+    let transform=new Ammo.btTransform();
+    body.getMotionState().getWorldTransform(transform);
+    
+    mesh.position.set(transform.getOrigin().x(),transform.getOrigin().y(),transform.getOrigin().z());
+    mesh.quaternion.set(
+      transform.getRotation().x(),
+      transform.getRotation().y(),
+      transform.getRotation().z(),
+      transform.getRotation().w()
+    );
+    
+    //mesh.rotation.x += 0.01;
+    //mesh.rotation.y += 0.01;
     /*
     console.log("sphere pos = " + 
         [trans.getOrigin().x().toFixed(2), 
@@ -150,6 +190,7 @@ export default class App{
          trans.getOrigin().z().toFixed(2)]
     );
     */
+    controls.update();
     renderer.render( scene, camera );
   }
   makeNoise(){
