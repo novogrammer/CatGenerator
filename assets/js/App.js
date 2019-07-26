@@ -94,6 +94,7 @@ export default class App{
     $(window).on("resize.app",this.onResize.bind(this));
     this.onResize();
     
+    $(window).on("keydown.app",this.onKeydown.bind(this));
   }
   spawn(){
     let noise=this.makeNoise();
@@ -135,6 +136,15 @@ export default class App{
     renderer.setSize(window.innerWidth,window.innerHeight);
     camera.aspect=window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
+  }
+  onKeydown(e){
+    const KEYCODE_SPACE=0x20;
+    if(e.keyCode==KEYCODE_SPACE){
+      for(let updater of this.updaters){
+        updater.destroy();
+      }
+      this.updaters=[];
+    }
   }
   onTick(){
     let {renderer,scene,camera,mesh,controls}=this.three;
