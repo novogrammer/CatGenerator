@@ -34,6 +34,7 @@ def text(query_text):
 def cat(noise_string):
     response=make_response()
     response.mimetype="image/png"
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     z_dim=100
     noise_string=noise_string+'00'*z_dim
     noise=[0]*z_dim
