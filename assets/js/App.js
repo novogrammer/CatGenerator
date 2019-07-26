@@ -161,10 +161,12 @@ export default class App{
   }
   makeNoise(){
     let noise="";
+    //let myRandom=()=>(Math.random() + Math.random())/2;
+    let myRandom=()=>Math.random();
     for(let i=0;i<100;++i){
-      let n=Math.floor(Math.random()*256);
-      noise+=n.toString(16)
-      noise+=n&0x0f;
+      let n=Math.floor(myRandom()*256);
+      noise+=((n&0xf0)>>4).toString(16)
+      noise+=(n&0x0f).toString(16);
     }
     return noise;
     
