@@ -238,7 +238,7 @@ export default class App{
       bodyMesh.add(faceMesh);
       setInterval(()=>{
         faceMesh.rotation.x=Math.sin(performance.now()*0.01)*0.2;
-      },0.1);
+      },100);
       
       let leftEarMesh=(()=>{
         let geometry=new THREE.BoxGeometry(1,1,1);
@@ -250,7 +250,7 @@ export default class App{
       faceMesh.add(leftEarMesh);
       setInterval(()=>{
         leftEarMesh.rotation.y=Math.sin(performance.now()*0.01)*0.2;
-      },0.1);
+      },100);
       
       let rightEarMesh=(()=>{
         let geometry=new THREE.BoxGeometry(1,1,1);
@@ -262,7 +262,7 @@ export default class App{
       faceMesh.add(rightEarMesh);
       setInterval(()=>{
         rightEarMesh.rotation.y=Math.sin(performance.now()*0.01)*0.2;
-      },0.1);
+      },100);
       
       let tailMesh=(()=>{
         let geometry=new THREE.BoxGeometry(1,1,1);
@@ -274,7 +274,7 @@ export default class App{
       bodyMesh.add(tailMesh);
       setInterval(()=>{
         tailMesh.rotation.y=Math.sin(performance.now()*0.01)*0.2;
-      },0.1);
+      },100);
       
       for(let iz=0;iz<2;++iz){
         let z=map(iz,0,1,-0.1,0.1);
@@ -291,7 +291,7 @@ export default class App{
           let b=(iz+ix)%2;
           setInterval(()=>{
             legMesh.rotation.x=Math.sin(performance.now()*0.01)*0.2*(b?1:-1);
-          },0.1);
+          },100);
         }
       }
       
