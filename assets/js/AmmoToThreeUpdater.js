@@ -29,6 +29,7 @@ export default class AmmoToThreeUpdater{
   destroy(){
     let {world,body,scene,object3d}=this;
     world.removeRigidBody(body);
+    Ammo.destroy(body);
     scene.remove(object3d);
     object3d.traverse((target)=>{
       let {geometry,material}=target;
