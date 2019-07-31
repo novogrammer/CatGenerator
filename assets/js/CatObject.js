@@ -1,5 +1,6 @@
 import {
   IS_DEBUG,
+  FPS,
 } from "./constants.js";
 
 import {
@@ -12,8 +13,10 @@ import * as THREE from "./three/build/three.module.js";
 export default class CatObject extends THREE.Object3D{
   constructor({material}){
     super();
+    this.currentTime=0;
     this.size=new THREE.Vector3();
-    this.setup(material);
+    this.setupObject(material);
+    this.setupEvent();
   }
   remapCubeGeometryUv({geometry,hasFace=false,bounds={min:{x:0,y:0},max:{x:1,y:1}}}){
     const INDEX_PX=0*2;
@@ -100,7 +103,7 @@ export default class CatObject extends THREE.Object3D{
     geometry.verticesNeedUpdate=true;
     
   }
-  setup(material){
+  setupObject(material){
     let makeBoundsXY=(minX,minY,maxX,maxY)=>{
       return {
         min:{
@@ -135,6 +138,7 @@ export default class CatObject extends THREE.Object3D{
         this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.15,-0.075,-0.15,0.15,0.075,0.15)});
         return new THREE.Mesh(geometry,material);
       })();
+      bodyMesh.name="body";
       this.add(bodyMesh);
       
       let faceMesh=(()=>{
@@ -144,10 +148,8 @@ export default class CatObject extends THREE.Object3D{
         return new THREE.Mesh(geometry,material);
       })();
       faceMesh.position.set(0,0,0.15);
+      faceMesh.name="face";
       bodyMesh.add(faceMesh);
-      setInterval(()=>{
-        faceMesh.rotation.x=Math.sin(performance.now()*0.01)*0.2;
-      },100);
       
       let leftEarMesh=(()=>{
         let geometry=new THREE.BoxGeometry(1,1,1);
@@ -156,10 +158,8 @@ export default class CatObject extends THREE.Object3D{
         return new THREE.Mesh(geometry,material);
       })();
       leftEarMesh.position.set((0.15-0.075)*1,0.25,0.1);
+      leftEarMesh.name="leftEar";
       faceMesh.add(leftEarMesh);
-      setInterval(()=>{
-        leftEarMesh.rotation.y=Math.sin(performance.now()*0.01)*0.2;
-      },100);
       
       let rightEarMesh=(()=>{
         let geometry=new THREE.BoxGeometry(1,1,1);
@@ -168,10 +168,8 @@ export default class CatObject extends THREE.Object3D{
         return new THREE.Mesh(geometry,material);
       })();
       rightEarMesh.position.set((0.15-0.075)*-1,0.25,0.1);
+      rightEarMesh.name="rightEar";
       faceMesh.add(rightEarMesh);
-      setInterval(()=>{
-        rightEarMesh.rotation.y=Math.sin(performance.now()*0.01)*0.2;
-      },100);
       
       let tailMesh=(()=>{
         let geometry=new THREE.BoxGeometry(1,1,1);
@@ -180,10 +178,8 @@ export default class CatObject extends THREE.Object3D{
         return new THREE.Mesh(geometry,material);
       })();
       tailMesh.position.set(0,0.075-0.05,-0.15);
+      tailMesh.name="tail";
       bodyMesh.add(tailMesh);
-      setInterval(()=>{
-        tailMesh.rotation.y=Math.sin(performance.now()*0.01)*0.2;
-      },100);
       
       for(let iz=0;iz<2;++iz){
         let z=map(iz,0,1,-0.1,0.1);
@@ -196,11 +192,9 @@ export default class CatObject extends THREE.Object3D{
             return new THREE.Mesh(geometry,material);
           })();
           legMesh.position.set(x,-0.075,z);
+          legMesh.name="leg["+iz+","+ix+"]";
           bodyMesh.add(legMesh);
           let b=(iz+ix)%2;
-          setInterval(()=>{
-            legMesh.rotation.x=Math.sin(performance.now()*0.01)*0.2*(b?1:-1);
-          },100);
         }
       }
       
@@ -222,5 +216,46 @@ export default class CatObject extends THREE.Object3D{
     }
     
     
+  }
+  setupEvent(){
+    this.addEventListener("updateanimation",this.onUpdateAnimation.bind(this));
+  }
+  onUpdateAnimation(event){
+    let previousTime=this.currentTime;
+    let dt=1/FPS;
+    this.currentTime+=dt;
+    let t=this.currentTime;
+    let findAndCallback=(name,cb)=>{
+      let obj=this.getObjectByName(name);
+      if(!!obj){
+        cb.call(this,obj);
+      }
+    }
+    findAndCallback("face",(mesh)=>{
+      mesh.rotation.x=Math.sin(t*10)*0.2;
+    });
+    findAndCallback("leftEar",(mesh)=>{
+      mesh.rotation.y=Math.sin(t*10)*0.2;
+    });
+    findAndCallback("rightEar",(mesh)=>{
+      mesh.rotation.y=Math.sin(t*10)*0.2;
+    });
+    findAndCallback("tail",(mesh)=>{
+      mesh.rotation.y=Math.sin(t*10)*0.2;
+    });
+    findAndCallback("leg[0,0]",(mesh)=>{
+      mesh.rotation.x=Math.sin(t*10)*0.2*1;
+    });
+    findAndCallback("leg[0,1]",(mesh)=>{
+      mesh.rotation.x=Math.sin(t*10)*0.2*-1;
+    });
+    findAndCallback("leg[1,0]",(mesh)=>{
+      mesh.rotation.x=Math.sin(t*10)*0.2*-1;
+    });
+    findAndCallback("leg[1,1]",(mesh)=>{
+      mesh.rotation.x=Math.sin(t*10)*0.2*1;
+    });
+
+    //console.log(event);
   }
 }

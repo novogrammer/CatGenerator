@@ -25,6 +25,7 @@ export default class AmmoToThreeUpdater{
       transform.getRotation().z(),
       transform.getRotation().w()
     );
+    object3d.dispatchEvent({type:"updateanimation"});
   }
   destroy(){
     let {world,body,scene,object3d}=this;
