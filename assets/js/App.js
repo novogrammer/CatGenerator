@@ -22,6 +22,7 @@ export default class App{
     this.updaters=[];
     this.setupThree();
     this.setupAmmo();
+    this.setupScene();
     this.setupStats();
     this.setupEvents();
     
@@ -57,24 +58,6 @@ export default class App{
 
     let physicsWorld=new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
     physicsWorld.setGravity(new Ammo.btVector3(0, -GRAVITY_CONSTANT, 0));
-    
-    {
-      let pos=new Ammo.btVector3(0,-1,0);
-      let halfSize=new Ammo.btVector3(5,1,5);
-      let form=new Ammo.btTransform();
-      form.setIdentity();
-      form.setOrigin(pos);
-      let ground=new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(
-        0,
-        new Ammo.btDefaultMotionState(form),
-        new Ammo.btBoxShape(halfSize),
-        new Ammo.btVector3(0,0,0),
-      ));
-      ground.setRestitution(1);
-      ground.setFriction(1);
-      physicsWorld.addRigidBody(ground);
-    }
-    
     
     this.ammo={physicsWorld};
   }
@@ -136,6 +119,57 @@ export default class App{
     
     let updater=new AmmoToThreeUpdater({world:physicsWorld,body:body,scene:scene,object3d:cat});
     this.updaters.push(updater);
+    
+    if(IS_DEBUG){
+      console.log("updaters.length: "+this.updaters.length);
+    }
+  }
+  makeBox({position=new THREE.Vector3(),quaternion=new THREE.Quaternion(),size=new THREE.Vector3(1,1,1),mass=0,material=new THREE.MeshBasicMaterial()}){
+    let {scene}=this.three;
+    let mesh=null;
+    {
+      let geometry=new THREE.BoxGeometry(size.x,size.y,size.z);
+      mesh=new THREE.Mesh(geometry,material);
+    }
+    
+    let {physicsWorld}=this.ammo;
+    let body=null;
+    {
+      let positionForAmmo=new Ammo.btVector3(position.x,position.y,position.z);
+      let quaternionForAmmo=new Ammo.btQuaternion(quaternion.x,quaternion.y,quaternion.z,quaternion.w);
+      let halfSize=new Ammo.btVector3(size.x*0.5,size.y*0.5,size.z*0.5);
+      let transform=new Ammo.btTransform();
+      transform.setIdentity();
+      transform.setOrigin(positionForAmmo);
+      transform.setRotation(quaternionForAmmo);
+      
+      let shape=new Ammo.btBoxShape(halfSize);
+      let localInertia=new Ammo.btVector3(0,0,0);
+      shape.calculateLocalInertia(mass,localInertia);
+      
+      body=new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(
+        mass,
+        new Ammo.btDefaultMotionState(transform),
+        shape,
+        localInertia,
+      ));
+      body.setRestitution(1);
+      body.setFriction(1);
+    }
+    let updater=new AmmoToThreeUpdater({world:physicsWorld,body:body,scene:scene,object3d:mesh});
+    this.updaters.push(updater);
+    
+  }
+  setupScene(){
+    let {physicsWorld}=this.ammo;
+    this.makeBox({
+      position:new THREE.Vector3(0,-1,0),
+      quaternion:new THREE.Quaternion(),
+      size:new THREE.Vector3(10,2,10),
+      mass:0,
+      material:new THREE.MeshBasicMaterial()
+    });
+    
   }
   onResize(){
     let {renderer,scene,camera}=this.three;
@@ -164,7 +198,7 @@ export default class App{
     }
     let newUpdaters=[];
     for(let updater of this.updaters){
-      if(0<updater.object3d.position.y){
+      if(-2<updater.object3d.position.y){
         newUpdaters.push(updater);
       }else{
         updater.destroy();
