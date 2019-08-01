@@ -33,18 +33,37 @@ export default class App{
   }
   setupThree(){
     let renderer=new THREE.WebGLRenderer({canvas:$("#View")[0]});
+    renderer.shadowMap.enabled=true;
     let scene=new THREE.Scene();
     let camera=new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 1000 );
-    this.three={renderer,scene,camera};
-
-    
-    
     
     let controls = new OrbitControls( camera, renderer.domElement );
     controls.target.set(0,1,0);
     camera.position.set(0,1,2);
     
-    this.three.controls=controls;
+    let ambientLight=new THREE.AmbientLight(0x707070);
+    scene.add(ambientLight);
+    let directionalLight=new THREE.DirectionalLight(0xffffff,1);
+    directionalLight.position.set(10,10,10);
+    directionalLight.castShadow=true;
+    {
+      let {shadow}=directionalLight;
+      let {camera,mapSize}=shadow;
+      const d=14;
+      camera.left=-d;
+      camera.right=d;
+      camera.top=d;
+      camera.bottom=-d;
+      camera.near=2;
+      camera.far=50;
+      mapSize.x=1024;
+      mapSize.y=1024;
+    }
+    scene.add(directionalLight);
+    
+
+    
+    this.three={renderer,scene,camera,controls};
 
     //camera.position.set(0,2,5);
     //camera.lookAt(new THREE.Vector3(0,2,0));
@@ -88,7 +107,11 @@ export default class App{
     
     let object3d=new THREE.Object3D();
     
-    let material=new THREE.MeshBasicMaterial({map:texture} );
+    let material=new THREE.MeshStandardMaterial({
+      map:texture,
+      roughness:0.8,
+      metalness:0.2,
+    });
     
     let cat=new CatObject({material});
     
@@ -130,6 +153,8 @@ export default class App{
     {
       let geometry=new THREE.BoxGeometry(size.x,size.y,size.z);
       mesh=new THREE.Mesh(geometry,material);
+      mesh.castShadow=true;
+      mesh.receiveShadow=true;
     }
     
     let {physicsWorld}=this.ammo;
@@ -167,7 +192,10 @@ export default class App{
       quaternion:new THREE.Quaternion(),
       size:new THREE.Vector3(10,2,10),
       mass:0,
-      material:new THREE.MeshBasicMaterial()
+      material:new THREE.MeshStandardMaterial({
+        roughness:0.8,
+        metalness:0.5,
+      }),
     });
     
   }
