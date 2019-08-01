@@ -27,12 +27,16 @@ export default class App{
     this.setupEvents();
     
     this.spawn();
+    /*
     setInterval(()=>{
       this.spawn();
     },1000);
+    */
   }
   setupThree(){
-    let renderer=new THREE.WebGLRenderer({canvas:$("#View")[0]});
+    let renderer=new THREE.WebGLRenderer({
+      canvas:$("#View")[0],
+    });
     renderer.shadowMap.enabled=true;
     renderer.shadowMap.type=THREE.BasicShadowMap;
     renderer.sortObjects=false;
@@ -205,10 +209,14 @@ export default class App{
   onKeydown(e){
     const KEYCODE_SPACE=0x20;
     if(e.keyCode==KEYCODE_SPACE){
+      /*
       for(let updater of this.updaters){
         updater.destroy();
       }
       this.updaters=[];
+      */
+      this.spawn();
+
     }
   }
   onTick(){
