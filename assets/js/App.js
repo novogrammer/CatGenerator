@@ -35,7 +35,7 @@ export default class App{
     let renderer=new THREE.WebGLRenderer({canvas:$("#View")[0]});
     renderer.shadowMap.enabled=true;
     let scene=new THREE.Scene();
-    let camera=new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 1000 );
+    let camera=new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 100 );
     
     let controls = new OrbitControls( camera, renderer.domElement );
     controls.target.set(0,1,0);
@@ -49,15 +49,15 @@ export default class App{
     {
       let {shadow}=directionalLight;
       let {camera,mapSize}=shadow;
-      const d=14;
+      const d=5;
       camera.left=-d;
       camera.right=d;
       camera.top=d;
       camera.bottom=-d;
       camera.near=2;
-      camera.far=50;
-      mapSize.x=1024;
-      mapSize.y=1024;
+      camera.far=30;
+      mapSize.x=512;
+      mapSize.y=512;
     }
     scene.add(directionalLight);
     
