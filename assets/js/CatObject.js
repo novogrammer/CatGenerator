@@ -139,6 +139,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
+        mesh.matrixAutoUpdate=false;
         return mesh;
       })();
       bodyMesh.name="body";
@@ -151,6 +152,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
+        mesh.matrixAutoUpdate=false;
         return mesh;
       })();
       faceMesh.position.set(0,0,0.15);
@@ -164,6 +166,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
+        mesh.matrixAutoUpdate=false;
         return mesh;
       })();
       leftEarMesh.position.set((0.15-0.075)*1,0.25,0.1);
@@ -177,6 +180,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
+        mesh.matrixAutoUpdate=false;
         return mesh;
       })();
       rightEarMesh.position.set((0.15-0.075)*-1,0.25,0.1);
@@ -190,6 +194,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
+        mesh.matrixAutoUpdate=false;
         return mesh;
       })();
       tailMesh.position.set(0,0.075-0.05,-0.15);
@@ -207,6 +212,7 @@ export default class CatObject extends THREE.Object3D{
             let mesh=new THREE.Mesh(geometry,material);
             mesh.castShadow=true;
             mesh.receiveShadow=true;
+            mesh.matrixAutoUpdate=false;
             return mesh;
           })();
           legMesh.position.set(x,-0.075,z);
@@ -271,6 +277,9 @@ export default class CatObject extends THREE.Object3D{
     });
     findAndCallback("leg[1,1]",(mesh)=>{
       mesh.rotation.x=Math.sin(t*10)*0.2*1;
+    });
+    this.traverse((target)=>{
+      target.updateMatrix();
     });
 
     //console.log(event);
