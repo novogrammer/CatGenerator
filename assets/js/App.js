@@ -34,6 +34,7 @@ export default class App{
   setupThree(){
     let renderer=new THREE.WebGLRenderer({canvas:$("#View")[0]});
     renderer.shadowMap.enabled=true;
+    renderer.shadowMap.type=THREE.BasicShadowMap;
     let scene=new THREE.Scene();
     let camera=new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 100 );
     
@@ -107,10 +108,8 @@ export default class App{
     
     let object3d=new THREE.Object3D();
     
-    let material=new THREE.MeshStandardMaterial({
+    let material=new THREE.MeshLambertMaterial({
       map:texture,
-      roughness:0.8,
-      metalness:0.2,
     });
     
     let cat=new CatObject({material});
@@ -192,10 +191,7 @@ export default class App{
       quaternion:new THREE.Quaternion(),
       size:new THREE.Vector3(10,2,10),
       mass:0,
-      material:new THREE.MeshStandardMaterial({
-        roughness:0.8,
-        metalness:0.5,
-      }),
+      material:new THREE.MeshLambertMaterial(),
     });
     
   }
