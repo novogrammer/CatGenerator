@@ -10,6 +10,8 @@ import {
 
 import * as THREE from "./three/build/three.module.js";
 
+let geometryCache={};
+
 export default class CatObject extends THREE.Object3D{
   constructor({material}){
     super();
@@ -133,72 +135,102 @@ export default class CatObject extends THREE.Object3D{
     
     {
       let bodyMesh=(()=>{
-        let geometry=new THREE.BoxGeometry(1,1,1);
-        this.remapCubeGeometryUv({geometry});
-        this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.15,-0.075,-0.15,0.15,0.075,0.15)});
+        const name="body";
+        let geometry=geometryCache[name]
+        if(!geometry){
+          geometry=new THREE.BoxGeometry(1,1,1);
+          this.remapCubeGeometryUv({geometry});
+          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.15,-0.075,-0.15,0.15,0.075,0.15)});
+          geometry=new THREE.BufferGeometry().fromGeometry(geometry);
+          geometryCache[name]=geometry;
+        }
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
         mesh.matrixAutoUpdate=false;
+        mesh.name=name;
         return mesh;
       })();
-      bodyMesh.name="body";
       this.add(bodyMesh);
       
       let faceMesh=(()=>{
-        let geometry=new THREE.BoxGeometry(1,1,1);
-        this.remapCubeGeometryUv({geometry,hasFace:true});
-        this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.15,-0.15+0.1,0,0.15,0.15+0.1,0.3)});
+        const name="face";
+        let geometry=geometryCache[name]
+        if(!geometry){
+          geometry=new THREE.BoxGeometry(1,1,1);
+          this.remapCubeGeometryUv({geometry,hasFace:true});
+          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.15,-0.15+0.1,0,0.15,0.15+0.1,0.3)});
+          geometry=new THREE.BufferGeometry().fromGeometry(geometry);
+          geometryCache[name]=geometry;
+        }
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
         mesh.matrixAutoUpdate=false;
+        mesh.name=name;
         return mesh;
       })();
       faceMesh.position.set(0,0,0.15);
-      faceMesh.name="face";
       bodyMesh.add(faceMesh);
       
       let leftEarMesh=(()=>{
-        let geometry=new THREE.BoxGeometry(1,1,1);
-        this.remapCubeGeometryUv({geometry,hasFace:true,bounds:makeBoundsXY(0.5,0.75,1,1)});
-        this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.075+0.01,-0,-0.04,0.075,0.1,0.04)});
+        const name="leftEar";
+        let geometry=geometryCache[name]
+        if(!geometry){
+          geometry=new THREE.BoxGeometry(1,1,1);
+          this.remapCubeGeometryUv({geometry,hasFace:true,bounds:makeBoundsXY(0.5,0.75,1,1)});
+          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.075+0.01,-0,-0.04,0.075,0.1,0.04)});
+          geometry=new THREE.BufferGeometry().fromGeometry(geometry);
+          geometryCache[name]=geometry;
+        }
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
         mesh.matrixAutoUpdate=false;
+        mesh.name=name;
         return mesh;
       })();
       leftEarMesh.position.set((0.15-0.075)*1,0.25,0.1);
-      leftEarMesh.name="leftEar";
       faceMesh.add(leftEarMesh);
       
       let rightEarMesh=(()=>{
-        let geometry=new THREE.BoxGeometry(1,1,1);
-        this.remapCubeGeometryUv({geometry,hasFace:true,bounds:makeBoundsXY(0,0.75,0.5,1)});
-        this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.075,-0,-0.04,0.075-0.01,0.1,0.04)});
+        const name="rightEar";
+        let geometry=geometryCache[name]
+        if(!geometry){
+          geometry=new THREE.BoxGeometry(1,1,1);
+          this.remapCubeGeometryUv({geometry,hasFace:true,bounds:makeBoundsXY(0,0.75,0.5,1)});
+          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.075,-0,-0.04,0.075-0.01,0.1,0.04)});
+          geometry=new THREE.BufferGeometry().fromGeometry(geometry);
+          geometryCache[name]=geometry;
+        }
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
         mesh.matrixAutoUpdate=false;
+        mesh.name=name;
         return mesh;
       })();
       rightEarMesh.position.set((0.15-0.075)*-1,0.25,0.1);
-      rightEarMesh.name="rightEar";
       faceMesh.add(rightEarMesh);
       
       let tailMesh=(()=>{
-        let geometry=new THREE.BoxGeometry(1,1,1);
-        this.remapCubeGeometryUv({geometry});
-        this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.05,-0.05,-0.2,0.05,0.05,0)});
+        const name="tail";
+        let geometry=geometryCache[name]
+        if(!geometry){
+          geometry=new THREE.BoxGeometry(1,1,1);
+          this.remapCubeGeometryUv({geometry});
+          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.05,-0.05,-0.2,0.05,0.05,0)});
+          geometry=new THREE.BufferGeometry().fromGeometry(geometry);
+          geometryCache[name]=geometry;
+        }
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
         mesh.matrixAutoUpdate=false;
+        mesh.name=name;
         return mesh;
       })();
       tailMesh.position.set(0,0.075-0.05,-0.15);
-      tailMesh.name="tail";
       bodyMesh.add(tailMesh);
       
       for(let iz=0;iz<2;++iz){
@@ -206,17 +238,23 @@ export default class CatObject extends THREE.Object3D{
         for(let ix=0;ix<2;++ix){
           let x=map(ix,0,1,-0.1,0.1);
           let legMesh=(()=>{
-            let geometry=new THREE.BoxGeometry(1,1,1);
-            this.remapCubeGeometryUv({geometry});
-            this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.05,-0.2,-0.05,0.05,0,0.05)});
+            const name="leg["+iz+","+ix+"]";
+            let geometry=geometryCache[name]
+            if(!geometry){
+              geometry=new THREE.BoxGeometry(1,1,1);
+              this.remapCubeGeometryUv({geometry});
+              this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.05,-0.2,-0.05,0.05,0,0.05)});
+              geometry=new THREE.BufferGeometry().fromGeometry(geometry);
+              geometryCache[name]=geometry;
+            }
             let mesh=new THREE.Mesh(geometry,material);
             mesh.castShadow=true;
             mesh.receiveShadow=true;
             mesh.matrixAutoUpdate=false;
+            mesh.name=name;
             return mesh;
           })();
           legMesh.position.set(x,-0.075,z);
-          legMesh.name="leg["+iz+","+ix+"]";
           bodyMesh.add(legMesh);
         }
       }

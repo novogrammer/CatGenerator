@@ -34,9 +34,10 @@ export default class AmmoToThreeUpdater{
     scene.remove(object3d);
     object3d.traverse((target)=>{
       let {geometry,material}=target;
-      if(!!geometry){
-        geometry.dispose();
-      }
+      //share geometry
+      //if(!!geometry){
+      //  geometry.dispose();
+      //}
       if(!!material){
         let {map}=material;
         if(!!map){

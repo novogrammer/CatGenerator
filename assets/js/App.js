@@ -35,6 +35,7 @@ export default class App{
     let renderer=new THREE.WebGLRenderer({canvas:$("#View")[0]});
     renderer.shadowMap.enabled=true;
     renderer.shadowMap.type=THREE.BasicShadowMap;
+    renderer.sortObjects=false;
     let scene=new THREE.Scene();
     let camera=new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 100 );
     
@@ -116,7 +117,7 @@ export default class App{
     
     let {size}=cat;
     
-    let pos=new Ammo.btVector3(Math.random()*10-5,5,0);
+    let pos=new Ammo.btVector3(Math.random()*2-1,5,0);
     //let pos=new Ammo.btVector3(0,5,0);
     let halfSize=new Ammo.btVector3(size.x*0.5,size.y*0.5,size.z*0.5);
     let mass=1;
