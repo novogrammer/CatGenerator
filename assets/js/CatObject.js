@@ -194,7 +194,6 @@ export default class CatObject extends THREE.Object3D{
           legMesh.position.set(x,-0.075,z);
           legMesh.name="leg["+iz+","+ix+"]";
           bodyMesh.add(legMesh);
-          let b=(iz+ix)%2;
         }
       }
       
