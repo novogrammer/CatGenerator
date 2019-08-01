@@ -243,6 +243,10 @@ export default class App{
     
     controls.update();
     renderer.render( scene, camera );
+    if(IS_DEBUG){
+      console.log("draw calls: "+renderer.info.render.calls);
+    }
+    renderer.info.reset();
   }
   makeNoise(){
     let noise="";
