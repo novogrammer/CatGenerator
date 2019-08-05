@@ -152,7 +152,7 @@ export default class App{
       console.log(text);
     }
   }
-  makeBox({position=new THREE.Vector3(),quaternion=new THREE.Quaternion(),size=new THREE.Vector3(1,1,1),mass=0,material=new THREE.MeshBasicMaterial()}){
+  makeBox({position=new THREE.Vector3(),quaternion=new THREE.Quaternion(),size=new THREE.Vector3(1,1,1),mass=0,material=new THREE.MeshBasicMaterial({flatShading:true})}){
     let {scene}=this.three;
     let mesh=null;
     {
@@ -188,19 +188,38 @@ export default class App{
     }
     let updater=new AmmoToThreeUpdater({world:physicsWorld,body:body,scene:scene,object3d:mesh});
     this.updaters.push(updater);
+    return updater;
     
   }
   setupScene(){
     let {physicsWorld}=this.ammo;
-    this.makeBox({
+    let ground=this.makeBox({
       position:new THREE.Vector3(0,-1,0),
       quaternion:new THREE.Quaternion(),
-      size:new THREE.Vector3(10*2,2,10*2),
+      size:new THREE.Vector3(10*1.5,2,10*1.5),
       mass:0,
       material:new THREE.MeshLambertMaterial({
         flatShading:true,
       }),
     });
+    let blender=this.makeBox({
+      position:new THREE.Vector3(0,0.5,0),
+      quaternion:new THREE.Quaternion(),
+      size:new THREE.Vector3(10,1,1),
+      mass:1,
+      material:new THREE.MeshLambertMaterial({
+        color:0xff0000,
+        flatShading:true,
+      }),
+    });
+    var localPivotA=new Ammo.btVector3(0,1,0);
+    var localPivotB=new Ammo.btVector3(0,-0.5,0);
+    var axis=new Ammo.btVector3(0,1,0);    
+    
+    let blenderHinge=new Ammo.btHingeConstraint(ground.body,blender.body,localPivotA,localPivotB,axis,axis,true);
+    physicsWorld.addConstraint( blenderHinge, true );
+
+    this.ammo.blenderHinge=blenderHinge;
     
   }
   onResize(){
@@ -224,8 +243,10 @@ export default class App{
   }
   onTick(){
     let {renderer,scene,camera,mesh,controls}=this.three;
-    let {physicsWorld,body}=this.ammo;
+    let {physicsWorld,blenderHinge}=this.ammo;
     //console.log(performance.now());
+    
+    blenderHinge.enableAngularMotor(true,1.5*1,50);
 
     physicsWorld.stepSimulation( 1/FPS, 10 );
     
@@ -238,6 +259,7 @@ export default class App{
         newUpdaters.push(updater);
       }else{
         updater.destroy();
+        console.log("DESTROY!");
       }
     }
     this.updaters=newUpdaters;
