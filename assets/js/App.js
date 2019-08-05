@@ -14,7 +14,7 @@ import Stats from "./stats/stats.module.js";
 
 import AmmoToThreeUpdater from "./AmmoToThreeUpdater.js";
 
-import CatObject from "./CatObject.js";
+import SkinnedCatObject from "./SkinnedCatObject.js";
 
 
 export default class App{
@@ -117,7 +117,7 @@ export default class App{
       flatShading:true,
     });
     
-    let cat=new CatObject({material});
+    let cat=new SkinnedCatObject({material});
     
     let {size}=cat;
     
@@ -148,7 +148,8 @@ export default class App{
     this.updaters.push(updater);
     
     if(IS_DEBUG){
-      console.log("updaters.length: "+this.updaters.length);
+      let text="updaters.length: "+this.updaters.length;
+      console.log(text);
     }
   }
   makeBox({position=new THREE.Vector3(),quaternion=new THREE.Quaternion(),size=new THREE.Vector3(1,1,1),mass=0,material=new THREE.MeshBasicMaterial()}){
@@ -194,7 +195,7 @@ export default class App{
     this.makeBox({
       position:new THREE.Vector3(0,-1,0),
       quaternion:new THREE.Quaternion(),
-      size:new THREE.Vector3(10,2,10),
+      size:new THREE.Vector3(10*2,2,10*2),
       mass:0,
       material:new THREE.MeshLambertMaterial({
         flatShading:true,
@@ -244,7 +245,9 @@ export default class App{
     controls.update();
     renderer.render( scene, camera );
     if(IS_DEBUG){
-      console.log("draw calls: "+renderer.info.render.calls);
+      let text="draw calls: "+renderer.info.render.calls;
+      console.log(text);
+      $("#DebugText").text(text);
     }
     renderer.info.reset();
   }
