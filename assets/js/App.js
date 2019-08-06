@@ -4,6 +4,10 @@ import {
   GRAVITY_CONSTANT,
 } from "./constants.js";
 
+import {
+  degToRad,
+} from "./math_utils.js";
+
 
 import * as THREE from "./three/build/three.module.js";
 import {OrbitControls} from "./three/examples/jsm/controls/OrbitControls.js";
@@ -20,6 +24,11 @@ import SkinnedCatObject from "./SkinnedCatObject.js";
 export default class App{
   constructor(){
     this.updaters=[];
+    this.mousePosition={x:0,y:0};
+    this.mouseDeltaPosition={x:0,y:0};
+    this.$View=$("#View");
+    this.isPointerLocked=false;
+    this.isFullscreen=false;
     this.setupThree();
     this.setupAmmo();
     this.setupScene();
@@ -105,6 +114,16 @@ export default class App{
     this.onResize();
     
     $(window).on("keydown.app",this.onKeydown.bind(this));
+    this.$View.on("mousemove.app",this.onMousemove.bind(this));
+    $(document).on("pointerlockchange.app",this.onPointerlockchange.bind(this));
+    $(document).on("fullscreenchange.app",this.onFullscreenchange.bind(this));
+    
+    $("#LockPointer").on("click",()=>{
+      this.lockPointer();
+    });
+    $("#Fullscreen").on("click",()=>{
+      this.fullscreen();
+    });
   }
   spawn(){
     let noise=this.makeNoise();
@@ -222,6 +241,12 @@ export default class App{
     this.ammo.blenderHinge=blenderHinge;
     
   }
+  lockPointer(){
+    this.$View[0].requestPointerLock();
+  }
+  fullscreen(){
+    $("html")[0].requestFullscreen();
+  }
   onResize(){
     let {renderer,scene,camera}=this.three;
     renderer.setSize(window.innerWidth,window.innerHeight);
@@ -241,12 +266,33 @@ export default class App{
 
     }
   }
+  onMousemove(e){
+    let {originalEvent}=e;
+    let {movementX,movementY}=originalEvent;
+    let {blenderHinge}=this.ammo;
+    //console.log(movementX,movementY);
+    this.mouseDeltaPosition.x+=movementX;
+    this.mouseDeltaPosition.y+=movementY;
+
+  }
+  onPointerlockchange(e){
+    this.isPointerLocked=!!document.pointerLockElement;
+    $("#LockPointer").toggle(!this.isPointerLocked);
+  }
+  onFullscreenchange(e){
+    this.isFullscreen=!!document.fullscreenElement;
+    $("#Fullscreen").toggle(!this.isFullscreen);
+  }
   onTick(){
     let {renderer,scene,camera,mesh,controls}=this.three;
     let {physicsWorld,blenderHinge}=this.ammo;
     //console.log(performance.now());
+    this.mousePosition.x+=this.mouseDeltaPosition.x;
+    this.mousePosition.y+=this.mouseDeltaPosition.y;
     
-    blenderHinge.enableAngularMotor(true,1.5*1,50);
+    //blenderHinge.enableAngularMotor(true,1.5*1,50);
+    blenderHinge.enableAngularMotor(true,degToRad(this.mouseDeltaPosition.x*FPS),50);
+    
 
     physicsWorld.stepSimulation( 1/FPS, 10 );
     
@@ -272,6 +318,8 @@ export default class App{
       $("#DebugText").text(text);
     }
     renderer.info.reset();
+    this.mouseDeltaPosition.x=0;
+    this.mouseDeltaPosition.y=0;
   }
   makeNoise(){
     let noise="";
