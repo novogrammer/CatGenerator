@@ -19,6 +19,7 @@ import Stats from "./stats/stats.module.js";
 import AmmoToThreeUpdater from "./AmmoToThreeUpdater.js";
 
 import SkinnedCatObject from "./SkinnedCatObject.js";
+import CatObject from "./CatObject.js";
 
 
 export default class App{
@@ -136,6 +137,7 @@ export default class App{
       flatShading:true,
     });
     
+    //let cat=new CatObject({material});
     let cat=new SkinnedCatObject({material});
     
     let {size}=cat;
@@ -291,7 +293,7 @@ export default class App{
     this.mousePosition.y+=this.mouseDeltaPosition.y;
     
     //blenderHinge.enableAngularMotor(true,1.5*1,50);
-    blenderHinge.enableAngularMotor(true,degToRad(this.mouseDeltaPosition.x*FPS),50);
+    //blenderHinge.enableAngularMotor(true,degToRad(this.mouseDeltaPosition.x*FPS),50);
     
 
     physicsWorld.stepSimulation( 1/FPS, 10 );

@@ -133,6 +133,8 @@ export default class CatObject extends THREE.Object3D{
       };
     };
     
+    const FACE_SIZE=0.3;
+    const EAR_SIZE=FACE_SIZE/3;
     {
       let bodyMesh=(()=>{
         const name="body";
@@ -140,7 +142,7 @@ export default class CatObject extends THREE.Object3D{
         if(!geometry){
           geometry=new THREE.BoxGeometry(1,1,1);
           this.remapCubeGeometryUv({geometry});
-          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.15,-0.075,-0.15,0.15,0.075,0.15)});
+        this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(FACE_SIZE*-0.5,-0.075,-0.15,FACE_SIZE*0.5,0.075,0.15)});
           geometry=new THREE.BufferGeometry().fromGeometry(geometry);
           geometryCache[name]=geometry;
         }
@@ -159,7 +161,7 @@ export default class CatObject extends THREE.Object3D{
         if(!geometry){
           geometry=new THREE.BoxGeometry(1,1,1);
           this.remapCubeGeometryUv({geometry,hasFace:true});
-          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.15,-0.15+0.1,0,0.15,0.15+0.1,0.3)});
+          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(FACE_SIZE*-0.5,FACE_SIZE*-0.5+0.1,FACE_SIZE*0,FACE_SIZE*0.5,FACE_SIZE*0.5+0.1,FACE_SIZE*1)});
           geometry=new THREE.BufferGeometry().fromGeometry(geometry);
           geometryCache[name]=geometry;
         }
@@ -178,8 +180,8 @@ export default class CatObject extends THREE.Object3D{
         let geometry=geometryCache[name]
         if(!geometry){
           geometry=new THREE.BoxGeometry(1,1,1);
-          this.remapCubeGeometryUv({geometry,hasFace:true,bounds:makeBoundsXY(0.5,0.75,1,1)});
-          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.075+0.01,-0,-0.04,0.075,0.1,0.04)});
+          this.remapCubeGeometryUv({geometry,hasFace:true,bounds:makeBoundsXY(2/3,2/3,3/3,3/3)});
+          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(EAR_SIZE*-0.5,0,-0.04,EAR_SIZE*0.5,EAR_SIZE,0.04)});
           geometry=new THREE.BufferGeometry().fromGeometry(geometry);
           geometryCache[name]=geometry;
         }
@@ -190,7 +192,7 @@ export default class CatObject extends THREE.Object3D{
         mesh.name=name;
         return mesh;
       })();
-      leftEarMesh.position.set((0.15-0.075)*1,0.25,0.1);
+      leftEarMesh.position.set(EAR_SIZE*1,0.25,0.1);
       faceMesh.add(leftEarMesh);
       
       let rightEarMesh=(()=>{
@@ -198,8 +200,8 @@ export default class CatObject extends THREE.Object3D{
         let geometry=geometryCache[name]
         if(!geometry){
           geometry=new THREE.BoxGeometry(1,1,1);
-          this.remapCubeGeometryUv({geometry,hasFace:true,bounds:makeBoundsXY(0,0.75,0.5,1)});
-          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(-0.075,-0,-0.04,0.075-0.01,0.1,0.04)});
+          this.remapCubeGeometryUv({geometry,hasFace:true,bounds:makeBoundsXY(0/3,2/3,1/3,3/3)});
+          this.remapCubeGeometryVertex({geometry,bounds:makeBoundsXYZ(EAR_SIZE*-0.5,0,-0.04,EAR_SIZE*0.5,EAR_SIZE,0.04)});
           geometry=new THREE.BufferGeometry().fromGeometry(geometry);
           geometryCache[name]=geometry;
         }
@@ -210,7 +212,8 @@ export default class CatObject extends THREE.Object3D{
         mesh.name=name;
         return mesh;
       })();
-      rightEarMesh.position.set((0.15-0.075)*-1,0.25,0.1);
+      rightEarMesh.position.set(EAR_SIZE*-1,0.25,0.1);
+      
       faceMesh.add(rightEarMesh);
       
       let tailMesh=(()=>{
