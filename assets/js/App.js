@@ -21,7 +21,6 @@ import AmmoToThreeUpdater from "./AmmoToThreeUpdater.js";
 import SkinnedCatObject from "./SkinnedCatObject.js";
 import CatObject from "./CatObject.js";
 
-
 export default class App{
   constructor(){
     this.updaters=[];
@@ -36,7 +35,7 @@ export default class App{
     this.setupStats();
     this.setupEvents();
     
-    this.spawn();
+    //this.spawn({});
     /*
     setInterval(()=>{
       this.spawn();
@@ -54,7 +53,7 @@ export default class App{
     
     let controls = new OrbitControls( camera, renderer.domElement );
     controls.target.set(0,1,0);
-    camera.position.set(0,1,2);
+    camera.position.set(0,1,5);
     
     let ambientLight=new THREE.AmbientLight(0x707070);
     scene.add(ambientLight);
@@ -126,7 +125,9 @@ export default class App{
       this.fullscreen();
     });
   }
-  spawn(){
+  spawn({position={x:0,y:5,z:0},velocity={x:0,y:0,z:0}}){
+
+
     let noise=this.makeNoise();
     let texture=new THREE.TextureLoader().load('/cat/'+noise);
     
@@ -142,13 +143,14 @@ export default class App{
     
     let {size}=cat;
     
-    let pos=new Ammo.btVector3(Math.random()*2-1,5,0);
-    //let pos=new Ammo.btVector3(0,5,0);
+    let positionForAmmo=new Ammo.btVector3(position.x,position.y,position.z);
+    let velocityForAmmo=new Ammo.btVector3(velocity.x,velocity.y,velocity.z);
+    
     let halfSize=new Ammo.btVector3(size.x*0.5,size.y*0.5,size.z*0.5);
     let mass=1;
     let transform=new Ammo.btTransform();
     transform.setIdentity();
-    transform.setOrigin(pos);
+    transform.setOrigin(positionForAmmo);
     let shape=new Ammo.btBoxShape(halfSize);
     let localInertia=new Ammo.btVector3(0,0,0);
     shape.calculateLocalInertia(mass,localInertia);
@@ -162,6 +164,7 @@ export default class App{
         localInertia
       )
     );
+    body.setLinearVelocity(velocityForAmmo);
     let {scene}=this.three;
     let {physicsWorld}=this.ammo;
     
@@ -197,7 +200,7 @@ export default class App{
       let shape=new Ammo.btBoxShape(halfSize);
       let localInertia=new Ammo.btVector3(0,0,0);
       shape.calculateLocalInertia(mass,localInertia);
-      
+
       body=new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(
         mass,
         new Ammo.btDefaultMotionState(transform),
@@ -214,33 +217,68 @@ export default class App{
   }
   setupScene(){
     let {physicsWorld}=this.ammo;
-    let ground=this.makeBox({
-      position:new THREE.Vector3(0,-1,0),
-      quaternion:new THREE.Quaternion(),
-      size:new THREE.Vector3(10*1.5,2,10*1.5),
-      mass:0,
-      material:new THREE.MeshLambertMaterial({
-        flatShading:true,
-      }),
-    });
-    let blender=this.makeBox({
-      position:new THREE.Vector3(0,0.5,0),
-      quaternion:new THREE.Quaternion(),
-      size:new THREE.Vector3(10,1,1),
-      mass:1,
-      material:new THREE.MeshLambertMaterial({
-        color:0xff0000,
-        flatShading:true,
-      }),
-    });
-    var localPivotA=new Ammo.btVector3(0,1,0);
-    var localPivotB=new Ammo.btVector3(0,-0.5,0);
-    var axis=new Ammo.btVector3(0,1,0);    
-    
-    let blenderHinge=new Ammo.btHingeConstraint(ground.body,blender.body,localPivotA,localPivotB,axis,axis,true);
-    physicsWorld.addConstraint( blenderHinge, true );
+    let ground=null;
+    {
+      ground=this.makeBox({
+        position:new THREE.Vector3(0,-1,0),
+        quaternion:new THREE.Quaternion(),
+        size:new THREE.Vector3(10*1.5,2,10*1.5),
+        mass:0,
+        material:new THREE.MeshLambertMaterial({
+          flatShading:true,
+        }),
+      });
+    }
+    if(false){
+      let blender=this.makeBox({
+        position:new THREE.Vector3(0,0.5,0),
+        quaternion:new THREE.Quaternion(),
+        size:new THREE.Vector3(10,1,1),
+        mass:1,
+        material:new THREE.MeshLambertMaterial({
+          color:0xff0000,
+          flatShading:true,
+        }),
+      });
+      var localPivotA=new Ammo.btVector3(0,1,0);
+      var localPivotB=new Ammo.btVector3(0,-0.5,0);
+      var axis=new Ammo.btVector3(0,1,0);    
+      
+      let blenderHinge=new Ammo.btHingeConstraint(ground.body,blender.body,localPivotA,localPivotB,axis,axis,true);
+      physicsWorld.addConstraint( blenderHinge, true );
 
-    this.ammo.blenderHinge=blenderHinge;
+      this.ammo.blenderHinge=blenderHinge;
+    }
+    {
+      let bar=this.makeBox({
+        position:new THREE.Vector3(0,2,0),
+        quaternion:new THREE.Quaternion(),
+        size:new THREE.Vector3(0.5,4,0.5),
+        mass:100,
+        material:new THREE.MeshLambertMaterial({
+          color:0x00ff00,
+          flatShading:true,
+        }),
+      });
+      bar.body.setActivationState(4);//DISABLE_DEACTIVATION
+      this.ammo.barBody=bar.body;
+      /*
+      var frameInA=new Ammo.btTransform();
+      let directionX=new Ammo.btQuaternion();
+      directionX.setRotation(new Ammo.btVector3(0,0,1),degToRad(0));
+      frameInA.setRotation(directionX);
+      frameInA.setOrigin(new Ammo.btVector3(0,1,0));
+      var frameInB=new Ammo.btTransform();
+      frameInB.setRotation(directionX);
+      frameInB.setOrigin(new Ammo.btVector3(0,-2,0));
+      
+      let barSlider=new Ammo.btSliderConstraint(ground.body,bar.body,frameInA,frameInB,true);
+      physicsWorld.addConstraint( barSlider, true );
+      barSlider.setLowerLinLimit(-1);
+      barSlider.setUpperLinLimit(1);
+      this.ammo.barSlider=barSlider;
+      */
+    }
     
   }
   lockPointer(){
@@ -264,14 +302,19 @@ export default class App{
       }
       this.updaters=[];
       */
-      this.spawn();
+      for(let ix=0;ix<5;++ix){
+        let x=ix*-0.3+1
+        for(let iy=0;iy<5;++iy){
+          let y=iy*0.5+0.2;
+          this.spawn({position:{x:x,y:y,z:0}});
+        }
+      }
 
     }
   }
   onMousemove(e){
     let {originalEvent}=e;
     let {movementX,movementY}=originalEvent;
-    let {blenderHinge}=this.ammo;
     //console.log(movementX,movementY);
     this.mouseDeltaPosition.x+=movementX;
     this.mouseDeltaPosition.y+=movementY;
@@ -287,15 +330,33 @@ export default class App{
   }
   onTick(){
     let {renderer,scene,camera,mesh,controls}=this.three;
-    let {physicsWorld,blenderHinge}=this.ammo;
+    let {physicsWorld,blenderHinge,barSlider,barBody}=this.ammo;
     //console.log(performance.now());
     this.mousePosition.x+=this.mouseDeltaPosition.x;
     this.mousePosition.y+=this.mouseDeltaPosition.y;
     
     //blenderHinge.enableAngularMotor(true,1.5*1,50);
     //blenderHinge.enableAngularMotor(true,degToRad(this.mouseDeltaPosition.x*FPS),50);
-    
-
+    /*
+    if(Math.floor(performance.now()/4000)%2==0){
+      barBody.setLinearVelocity(new Ammo.btVector3(1,0,0));
+    }else{
+      barBody.setLinearVelocity(new Ammo.btVector3(-1,0,0));
+    }
+    */
+    let deg=performance.now()/1000*360/4;
+    if(Math.floor(deg/360)%2==0){
+      deg=0;
+    }
+    {
+      let x=Math.cos(degToRad(deg))*2;
+      let transform=new Ammo.btTransform();
+      transform.setIdentity();
+      transform.setOrigin(new Ammo.btVector3(x,2,0));
+      barBody.setCenterOfMassTransform(transform);
+      
+      //type:BODYTYPE_KINEMATIC 2
+    }
     physicsWorld.stepSimulation( 1/FPS, 10 );
     
     for(let updater of this.updaters){
@@ -316,7 +377,7 @@ export default class App{
     renderer.render( scene, camera );
     if(IS_DEBUG){
       let text="draw calls: "+renderer.info.render.calls;
-      console.log(text);
+      //console.log(text);
       $("#DebugText").text(text);
     }
     renderer.info.reset();

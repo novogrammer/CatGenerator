@@ -17,6 +17,12 @@ export default class AmmoToThreeUpdater{
   update(){
     let {body,object3d,transform}=this;
     body.getMotionState().getWorldTransform(transform);
+    let isActive=body.isActive();
+    object3d.traverse((target)=>{
+      if(!!target.material){
+        target.material.wireframe=!isActive;
+      }
+    })
     
     object3d.position.set(transform.getOrigin().x(),transform.getOrigin().y(),transform.getOrigin().z());
     object3d.quaternion.set(
