@@ -103,13 +103,22 @@ export default class App{
     $("#Stats").toggle(IS_DEBUG);
   }
   setupEvents(){
-    let animate=()=>{
+    if(FPS==60){
+      let animate=()=>{
+        requestAnimationFrame(animate);
+        this.stats.begin();
+        this.onTick();
+        this.stats.end();
+      };
       requestAnimationFrame(animate);
-      this.stats.begin();
-      this.onTick();
-      this.stats.end();
-    };
-    requestAnimationFrame(animate);
+    }else{
+      setInterval(()=>{
+        this.stats.begin();
+        this.onTick();
+        this.stats.end();
+      },1/FPS*1000);
+    }
+    
     $(window).on("resize.app",this.onResize.bind(this));
     this.onResize();
     
