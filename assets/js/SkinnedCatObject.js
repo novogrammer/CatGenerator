@@ -1,6 +1,7 @@
 import {
   IS_DEBUG,
   FPS,
+  CAT_OBJECT_AABB,
 } from "./constants.js";
 
 import {
@@ -329,8 +330,7 @@ export default class SkinnedCatObject extends THREE.Object3D{
     
     
     {
-      let aabb=new THREE.Box3();
-      aabb.setFromObject(this);
+      let aabb=CAT_OBJECT_AABB;
       let center=new THREE.Vector3();
       aabb.getCenter(center);
       for(let child of this.children){

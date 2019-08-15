@@ -1,6 +1,7 @@
 import {
   IS_DEBUG,
   FPS,
+  CAT_OBJECT_AABB,
 } from "./constants.js";
 
 import {
@@ -149,7 +150,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
-        mesh.matrixAutoUpdate=false;
+        mesh.matrixAutoUpdate=true;
         mesh.name=name;
         return mesh;
       })();
@@ -168,7 +169,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
-        mesh.matrixAutoUpdate=false;
+        mesh.matrixAutoUpdate=true;
         mesh.name=name;
         return mesh;
       })();
@@ -188,7 +189,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
-        mesh.matrixAutoUpdate=false;
+        mesh.matrixAutoUpdate=true;
         mesh.name=name;
         return mesh;
       })();
@@ -208,7 +209,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
-        mesh.matrixAutoUpdate=false;
+        mesh.matrixAutoUpdate=true;
         mesh.name=name;
         return mesh;
       })();
@@ -229,7 +230,7 @@ export default class CatObject extends THREE.Object3D{
         let mesh=new THREE.Mesh(geometry,material);
         mesh.castShadow=true;
         mesh.receiveShadow=true;
-        mesh.matrixAutoUpdate=false;
+        mesh.matrixAutoUpdate=true;
         mesh.name=name;
         return mesh;
       })();
@@ -253,7 +254,7 @@ export default class CatObject extends THREE.Object3D{
             let mesh=new THREE.Mesh(geometry,material);
             mesh.castShadow=true;
             mesh.receiveShadow=true;
-            mesh.matrixAutoUpdate=false;
+            mesh.matrixAutoUpdate=true;
             mesh.name=name;
             return mesh;
           })();
@@ -266,17 +267,20 @@ export default class CatObject extends THREE.Object3D{
       
       
     }
-    
-    
     {
-      let aabb=new THREE.Box3();
-      aabb.setFromObject(this);
+      //let aabb=new THREE.Box3();
+      //aabb.setFromObject(this);
+      let aabb=CAT_OBJECT_AABB;
       let center=new THREE.Vector3();
       aabb.getCenter(center);
       for(let child of this.children){
         child.position.sub(center);
       }
       aabb.getSize(this.size);
+      
+      this.traverse((target)=>{
+        target.matrixAutoUpdate=false;
+      });
     }
     
     
