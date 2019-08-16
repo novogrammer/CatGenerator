@@ -21,14 +21,32 @@ import AmmoToThreeUpdater from "./AmmoToThreeUpdater.js";
 import SkinnedCatObject from "./SkinnedCatObject.js";
 import CatObject from "./CatObject.js";
 
+
+import ContactFilterManager from "./ContactFilterManager.js";
+import ContactFilterGround from "./ContactFilterGround.js";
+import ContactFilterCat from "./ContactFilterCat.js";
+import ContactFilterCatSensor from "./ContactFilterCatSensor.js";
+
+
+
+
+
+
+
 export default class App{
   constructor(){
     this.updaters=[];
+    this.catBodies=[];
     this.mousePosition={x:0,y:0};
     this.mouseDeltaPosition={x:0,y:0};
     this.$View=$("#View");
     this.isPointerLocked=false;
     this.isFullscreen=false;
+    this.three=null;
+    this.ammo=null;
+    this.stats=null;
+    this.contactFilterManager=null;
+    
     this.setupThree();
     this.setupAmmo();
     this.setupScene();
@@ -91,8 +109,8 @@ export default class App{
 
     let physicsWorld=new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
     physicsWorld.setGravity(new Ammo.btVector3(0, -GRAVITY_CONSTANT, 0));
-    
-    this.ammo={physicsWorld};
+    this.contactFilterManager=new ContactFilterManager(dispatcher);
+    this.ammo={physicsWorld,dispatcher};
   }
   setupStats(){
     this.stats=new Stats();
@@ -179,13 +197,65 @@ export default class App{
     
     let updater=new AmmoToThreeUpdater({world:physicsWorld,body:body,scene:scene,object3d:cat});
     this.updaters.push(updater);
+    this.catBodies.push(body);
+    let contactFilter=new ContactFilterCat(updater);
+    this.contactFilterManager.add(contactFilter);
+    
+    
+    const hasWeight=false;
+    if(hasWeight){
+      let sensorUpdater=this.makeBox({
+        position:{x:position.x,y:position.y+size.y*-0.5+0.1*0.5,z:position.z},
+        size:{x:0.1,y:0.1,z:0.1},
+        mass:10,
+      });
+      var frameInA=new Ammo.btTransform();
+      frameInA.setIdentity();
+      frameInA.setOrigin(new Ammo.btVector3(0,size.y*-0.5,0));
+      var frameInB=new Ammo.btTransform();
+      frameInB.setIdentity();
+      //frameInB.setOrigin(new Ammo.btVector3(0,-0.1,0));
+      frameInB.setOrigin(new Ammo.btVector3(0,-0.2,0));
+      
+      let anchor=new Ammo.btFixedConstraint(body,sensorUpdater.body,frameInA,frameInB);
+      physicsWorld.addConstraint( anchor, true );
+    }
+    
+    const hasSensor=true;
+    if(hasSensor){
+      let sensorUpdater=this.makeBox({
+        position:{x:position.x,y:position.y+size.y*-0.5+0.1*0.5,z:position.z},
+        size:{x:0.1,y:0.1,z:0.1},
+        mass:0.001,
+        isSensor:true,
+      });
+      var frameInA=new Ammo.btTransform();
+      frameInA.setIdentity();
+      frameInA.setOrigin(new Ammo.btVector3(0,size.y*-0.5,0));
+      var frameInB=new Ammo.btTransform();
+      frameInB.setIdentity();
+      frameInB.setOrigin(new Ammo.btVector3(0,0.1*0.5,0));
+      
+      //CF_NO_CONTACT_RESPONSE = 4
+      sensorUpdater.body.setCollisionFlags(sensorUpdater.body.getCollisionFlags()|4);
+      
+      
+      let anchor=new Ammo.btFixedConstraint(body,sensorUpdater.body,frameInA,frameInB);
+
+      physicsWorld.addConstraint( anchor, true );
+      
+      let contactFilter=new ContactFilterCatSensor(sensorUpdater);
+      this.contactFilterManager.add(contactFilter);
+    }
+    
+    
     
     if(IS_DEBUG){
       let text="updaters.length: "+this.updaters.length;
       console.log(text);
     }
   }
-  makeBox({position=new THREE.Vector3(),quaternion=new THREE.Quaternion(),size=new THREE.Vector3(1,1,1),mass=0,material=new THREE.MeshBasicMaterial({flatShading:true})}){
+  makeBox({position=new THREE.Vector3(),quaternion=new THREE.Quaternion(),size=new THREE.Vector3(1,1,1),mass=0,material=new THREE.MeshBasicMaterial({flatShading:true}),isSensor=false}){
     let {scene}=this.three;
     let mesh=null;
     {
@@ -209,7 +279,6 @@ export default class App{
       let shape=new Ammo.btBoxShape(halfSize);
       let localInertia=new Ammo.btVector3(0,0,0);
       shape.calculateLocalInertia(mass,localInertia);
-
       body=new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(
         mass,
         new Ammo.btDefaultMotionState(transform),
@@ -225,6 +294,7 @@ export default class App{
     
   }
   setupScene(){
+    let {contactFilterManager}=this;
     let {physicsWorld}=this.ammo;
     let ground=null;
     {
@@ -237,6 +307,9 @@ export default class App{
           flatShading:true,
         }),
       });
+      let contactFilter=new ContactFilterGround(ground);
+      this.contactFilterManager.add(contactFilter);
+      
     }
     if(false){
       let blender=this.makeBox({
@@ -258,7 +331,7 @@ export default class App{
 
       this.ammo.blenderHinge=blenderHinge;
     }
-    {
+    if(false){
       let bar=this.makeBox({
         position:new THREE.Vector3(0,2,0),
         quaternion:new THREE.Quaternion(),
@@ -311,6 +384,7 @@ export default class App{
       }
       this.updaters=[];
       */
+      /*
       for(let ix=0;ix<5;++ix){
         let x=ix*-0.3+1
         for(let iy=0;iy<5;++iy){
@@ -318,6 +392,8 @@ export default class App{
           this.spawn({position:{x:x,y:y,z:0}});
         }
       }
+      */
+      this.spawn({position:{x:0,y:1,z:0}});
 
     }
   }
@@ -339,7 +415,7 @@ export default class App{
   }
   onTick(){
     let {renderer,scene,camera,mesh,controls}=this.three;
-    let {physicsWorld,blenderHinge,barSlider,barBody}=this.ammo;
+    let {physicsWorld,dispatcher,blenderHinge,barSlider,barBody}=this.ammo;
     //console.log(performance.now());
     this.mousePosition.x+=this.mouseDeltaPosition.x;
     this.mousePosition.y+=this.mouseDeltaPosition.y;
@@ -353,6 +429,7 @@ export default class App{
       barBody.setLinearVelocity(new Ammo.btVector3(-1,0,0));
     }
     */
+    /*
     let deg=performance.now()/1000*360/4;
     if(Math.floor(deg/360)%2==0){
       deg=0;
@@ -364,9 +441,10 @@ export default class App{
       transform.setOrigin(new Ammo.btVector3(x,2,0));
       barBody.setCenterOfMassTransform(transform);
       
-      //type:BODYTYPE_KINEMATIC 2
     }
+    */
     physicsWorld.stepSimulation( 1/FPS, 10 );
+    this.contactFilterManager.update();
     
     for(let updater of this.updaters){
       updater.update();

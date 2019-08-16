@@ -45,3 +45,11 @@ export function coverRect(rectOriginal,rectTarget){
   };
   return rect;
 }
+
+//from https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Set
+export function intersect(lhs,rhs){
+  return new Set([...lhs].filter(x=>rhs.has(x)));
+}
+export function difference(lhs,rhs){
+  return new Set([...lhs].filter(x=>!rhs.has(x)));
+}
