@@ -16,27 +16,19 @@ import {OrbitControls} from "./three/examples/jsm/controls/OrbitControls.js";
 
 import Stats from "./stats/stats.module.js";
 
-import AmmoToThreeUpdater from "./AmmoToThreeUpdater.js";
-
 import SkinnedCatObject from "./SkinnedCatObject.js";
 import CatObject from "./CatObject.js";
 
 
-import ContactFilterManager from "./ContactFilterManager.js";
-import ContactFilterGround from "./ContactFilterGround.js";
-import ContactFilterCat from "./ContactFilterCat.js";
-import ContactFilterCatSensor from "./ContactFilterCatSensor.js";
-
-
-
-
-
+import ControllerManager from "./ControllerManager.js";
+import GroundController from "./GroundController.js";
+import CatController from "./CatController.js";
+import CatSensorController from "./CatSensorController.js";
+import EmptyController from "./EmptyController.js";
 
 
 export default class App{
   constructor(){
-    this.updaters=[];
-    this.catBodies=[];
     this.mousePosition={x:0,y:0};
     this.mouseDeltaPosition={x:0,y:0};
     this.$View=$("#View");
@@ -45,7 +37,7 @@ export default class App{
     this.three=null;
     this.ammo=null;
     this.stats=null;
-    this.contactFilterManager=null;
+    this.controllerManager=null;
     
     this.setupThree();
     this.setupAmmo();
@@ -109,7 +101,7 @@ export default class App{
 
     let physicsWorld=new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
     physicsWorld.setGravity(new Ammo.btVector3(0, -GRAVITY_CONSTANT, 0));
-    this.contactFilterManager=new ContactFilterManager(dispatcher);
+    this.controllerManager=new ControllerManager(dispatcher);
     this.ammo={physicsWorld,dispatcher};
   }
   setupStats(){
@@ -195,19 +187,17 @@ export default class App{
     let {scene}=this.three;
     let {physicsWorld}=this.ammo;
     
-    let updater=new AmmoToThreeUpdater({world:physicsWorld,body:body,scene:scene,object3d:cat});
-    this.updaters.push(updater);
-    this.catBodies.push(body);
-    let contactFilter=new ContactFilterCat(updater);
-    this.contactFilterManager.add(contactFilter);
+    let controller=new CatController({world:physicsWorld,body:body,scene:scene,object3d:cat});
+    this.controllerManager.add(controller);
     
     
     const hasWeight=false;
     if(hasWeight){
-      let sensorUpdater=this.makeBox({
+      let weightController=this.makeBox({
         position:{x:position.x,y:position.y+size.y*-0.5+0.1*0.5,z:position.z},
         size:{x:0.1,y:0.1,z:0.1},
         mass:10,
+        ControllerClass:EmptyController,
       });
       var frameInA=new Ammo.btTransform();
       frameInA.setIdentity();
@@ -217,17 +207,18 @@ export default class App{
       //frameInB.setOrigin(new Ammo.btVector3(0,-0.1,0));
       frameInB.setOrigin(new Ammo.btVector3(0,-0.2,0));
       
-      let anchor=new Ammo.btFixedConstraint(body,sensorUpdater.body,frameInA,frameInB);
+      let anchor=new Ammo.btFixedConstraint(body,weightController.body,frameInA,frameInB);
       physicsWorld.addConstraint( anchor, true );
     }
     
     const hasSensor=true;
     if(hasSensor){
-      let sensorUpdater=this.makeBox({
+      let sensorController=this.makeBox({
         position:{x:position.x,y:position.y+size.y*-0.5+0.1*0.5,z:position.z},
         size:{x:0.1,y:0.1,z:0.1},
         mass:0.001,
         isSensor:true,
+        ControllerClass:CatSensorController,
       });
       var frameInA=new Ammo.btTransform();
       frameInA.setIdentity();
@@ -237,25 +228,24 @@ export default class App{
       frameInB.setOrigin(new Ammo.btVector3(0,0.1*0.5,0));
       
       //CF_NO_CONTACT_RESPONSE = 4
-      sensorUpdater.body.setCollisionFlags(sensorUpdater.body.getCollisionFlags()|4);
+      sensorController.body.setCollisionFlags(sensorController.body.getCollisionFlags()|4);
       
-      
-      let anchor=new Ammo.btFixedConstraint(body,sensorUpdater.body,frameInA,frameInB);
-
+      let anchor=new Ammo.btFixedConstraint(body,sensorController.body,frameInA,frameInB);
       physicsWorld.addConstraint( anchor, true );
-      
-      let contactFilter=new ContactFilterCatSensor(sensorUpdater);
-      this.contactFilterManager.add(contactFilter);
     }
     
     
     
-    if(IS_DEBUG){
-      let text="updaters.length: "+this.updaters.length;
-      console.log(text);
-    }
   }
-  makeBox({position=new THREE.Vector3(),quaternion=new THREE.Quaternion(),size=new THREE.Vector3(1,1,1),mass=0,material=new THREE.MeshBasicMaterial({flatShading:true}),isSensor=false}){
+  makeBox({
+    position=new THREE.Vector3(),
+    quaternion=new THREE.Quaternion(),
+    size=new THREE.Vector3(1,1,1),
+    mass=0,
+    material=new THREE.MeshBasicMaterial({flatShading:true}),
+    isSensor=false,
+    ControllerClass=EmptyController,
+  }){
     let {scene}=this.three;
     let mesh=null;
     {
@@ -288,13 +278,13 @@ export default class App{
       body.setRestitution(1);
       body.setFriction(1);
     }
-    let updater=new AmmoToThreeUpdater({world:physicsWorld,body:body,scene:scene,object3d:mesh});
-    this.updaters.push(updater);
-    return updater;
+    let controller=new ControllerClass({world:physicsWorld,body:body,scene:scene,object3d:mesh});
+    this.controllerManager.add(controller);
+    return controller;
     
   }
   setupScene(){
-    let {contactFilterManager}=this;
+    let {controllerManager}=this;
     let {physicsWorld}=this.ammo;
     let ground=null;
     {
@@ -307,8 +297,6 @@ export default class App{
           flatShading:true,
         }),
       });
-      let contactFilter=new ContactFilterGround(ground);
-      this.contactFilterManager.add(contactFilter);
       
     }
     if(false){
@@ -379,12 +367,6 @@ export default class App{
     const KEYCODE_SPACE=0x20;
     if(e.keyCode==KEYCODE_SPACE){
       /*
-      for(let updater of this.updaters){
-        updater.destroy();
-      }
-      this.updaters=[];
-      */
-      /*
       for(let ix=0;ix<5;++ix){
         let x=ix*-0.3+1
         for(let iy=0;iy<5;++iy){
@@ -444,23 +426,9 @@ export default class App{
     }
     */
     physicsWorld.stepSimulation( 1/FPS, 10 );
-    this.contactFilterManager.update();
+    this.controllerManager.updateContact();
+    this.controllerManager.update();
     
-    for(let updater of this.updaters){
-      updater.update();
-    }
-    let newUpdaters=[];
-    for(let updater of this.updaters){
-      if(-2<updater.object3d.position.y){
-        newUpdaters.push(updater);
-      }else{
-        updater.destroy();
-        console.log("DESTROY!");
-      }
-    }
-    this.updaters=newUpdaters;
-    
-    controls.update();
     renderer.render( scene, camera );
     if(IS_DEBUG){
       let text="draw calls: "+renderer.info.render.calls;
