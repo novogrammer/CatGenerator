@@ -364,8 +364,7 @@ export default class App{
     camera.updateProjectionMatrix();
   }
   onKeydown(e){
-    const KEYCODE_SPACE=0x20;
-    if(e.keyCode==KEYCODE_SPACE){
+    if(e.key==" "){
       /*
       for(let ix=0;ix<5;++ix){
         let x=ix*-0.3+1
@@ -378,6 +377,14 @@ export default class App{
       this.spawn({position:{x:0,y:1,z:0}});
 
     }
+    /*
+    if(e.key.toUpperCase()=="Q"){
+      for(let controller of this.controllerManager.controllers){
+        controller.destroy();
+      }
+      this.controllerManager.controllers=[];
+    }
+    */
   }
   onMousemove(e){
     let {originalEvent}=e;
