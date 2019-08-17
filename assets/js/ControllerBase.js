@@ -22,6 +22,7 @@ export default class ControllerBase extends EventEmitter3{
     this.transform=new Ammo.btTransform();
     this.currentContactSet=new Set();
     this.previousContactSet=[];
+    this.constraintsToDestroy=[];
     scene.add(object3d);
     world.addRigidBody(body);
     this.setupUserPointer();
@@ -75,8 +76,20 @@ export default class ControllerBase extends EventEmitter3{
   }
   destroy(){
     let {world,body,scene,object3d}=this;
+    
+    //destroy UserPointer
+    let dummyObject=Ammo.castObject(body.getUserPointer(),Ammo.btVector3);
+    dummyObject.controller=null;
+    Ammo.destroy(dummyObject);
+    
     world.removeRigidBody(body);
     Ammo.destroy(body);
+    for(let constraint of this.constraintsToDestroy){
+      world.removeConstraint(constraint);
+      Ammo.destroy(constraint);
+    }
+    Ammo.destroy(this.transform);
+    
     scene.remove(object3d);
     object3d.traverse((target)=>{
       let {geometry,material}=target;
