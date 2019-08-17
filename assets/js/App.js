@@ -187,8 +187,8 @@ export default class App{
     let {scene}=this.three;
     let {physicsWorld}=this.ammo;
     
-    let controller=new CatController({world:physicsWorld,body:body,scene:scene,object3d:cat});
-    this.controllerManager.add(controller);
+    let catController=new CatController({world:physicsWorld,body:body,scene:scene,object3d:cat});
+    this.controllerManager.add(catController);
     
     
     const hasWeight=false;
@@ -213,9 +213,10 @@ export default class App{
     
     const hasSensor=true;
     if(hasSensor){
-      let sensorController=this.makeBox({
-        position:{x:position.x,y:position.y+size.y*-0.5+0.1*0.5,z:position.z},
-        size:{x:0.1,y:0.1,z:0.1},
+      let offsetY=0.05*0.5;
+      let catSensorController=this.makeBox({
+        position:{x:position.x,y:position.y+size.y*-0.5-offsetY,z:position.z},
+        size:{x:0.05,y:0.05,z:0.05},
         mass:0.001,
         isSensor:true,
         ControllerClass:CatSensorController,
@@ -225,13 +226,16 @@ export default class App{
       frameInA.setOrigin(new Ammo.btVector3(0,size.y*-0.5,0));
       var frameInB=new Ammo.btTransform();
       frameInB.setIdentity();
-      frameInB.setOrigin(new Ammo.btVector3(0,0.1*0.5,0));
+      frameInB.setOrigin(new Ammo.btVector3(0,offsetY,0));
       
       //CF_NO_CONTACT_RESPONSE = 4
-      sensorController.body.setCollisionFlags(sensorController.body.getCollisionFlags()|4);
-      
-      let anchor=new Ammo.btFixedConstraint(body,sensorController.body,frameInA,frameInB);
+      catSensorController.body.setCollisionFlags(catSensorController.body.getCollisionFlags()|4);
+      let anchor=new Ammo.btFixedConstraint(body,catSensorController.body,frameInA,frameInB);
       physicsWorld.addConstraint( anchor, true );
+      
+      //assign
+      catController.assign({catSensorController});
+      catSensorController.assign({catController,anchor});
     }
     
     
@@ -296,6 +300,7 @@ export default class App{
         material:new THREE.MeshLambertMaterial({
           flatShading:true,
         }),
+        ControllerClass:GroundController,
       });
       
     }
@@ -432,9 +437,9 @@ export default class App{
       
     }
     */
-    physicsWorld.stepSimulation( 1/FPS, 10 );
     this.controllerManager.updateContact();
     this.controllerManager.update();
+    physicsWorld.stepSimulation( 1/FPS, 10 );
     
     renderer.render( scene, camera );
     if(IS_DEBUG){

@@ -4,6 +4,7 @@ import {
 } from "./constants.js";
 
 
+import ControllerBase from "./ControllerBase.js";
 
 export default class ControllerManager{
   constructor(dispatcher){
@@ -19,9 +20,7 @@ export default class ControllerManager{
   updateContact(){
     let {dispatcher}=this;
     let getcontroller=(body)=>{
-      let rigidBody=Ammo.castObject(body,Ammo.btRigidBody);
-      let {controller}=Ammo.castObject(rigidBody.getUserPointer(),Ammo.btVector3);
-      return controller;
+      return ControllerBase.getController(body);
     };
     
     for(let controller of this.controllers){
@@ -31,11 +30,14 @@ export default class ControllerManager{
     let qty=dispatcher.getNumManifolds();
     for(let i=0;i<qty;++i){
       let contactManifold=dispatcher.getManifoldByIndexInternal(i);
-      let controller0=getcontroller(contactManifold.getBody0());
-      let controller1=getcontroller(contactManifold.getBody1());
-      if (!!controller0 && !!controller1){
-        controller0.addContact(controller1);
-        controller1.addContact(controller0);
+      if(0<contactManifold.getNumContacts()){
+        let controller0=getcontroller(contactManifold.getBody0());
+        let controller1=getcontroller(contactManifold.getBody1());
+        if (!!controller0 && !!controller1){
+          controller0.addContact(controller1);
+          controller1.addContact(controller0);
+        }
+        
       }
     }
     for(let controller of this.controllers){
@@ -51,6 +53,7 @@ export default class ControllerManager{
     }
     
     //TODO
+    /*
     let newControllers=[];
     for(let controller of this.controllers){
       if(-2<controller.object3d.position.y){
@@ -61,5 +64,6 @@ export default class ControllerManager{
       }
     }
     this.controllers=newControllers;
+    */
   }
 }

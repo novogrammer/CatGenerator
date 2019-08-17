@@ -5,6 +5,11 @@ import ControllerBase from "./ControllerBase.js";
 export default class CatSensorController extends ControllerBase{
   constructor(params){
     super(Object.assign({tags:["catsensor"],reportTags:["canwalk"]},params));
+    this.catController=null;
+  }
+  assign({catController,anchor}){
+    this.catController=catController;
+    this.constraintsToDestroy.push(anchor);
   }
   onEnter(other){
     super.onEnter(other);

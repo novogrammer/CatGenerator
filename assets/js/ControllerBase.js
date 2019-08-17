@@ -122,4 +122,10 @@ export default class ControllerBase extends EventEmitter3{
     //DO NOTHING
     //console.log("onLeave");
   }
+  static getController(body){
+    let rigidBody=Ammo.castObject(body,Ammo.btRigidBody);
+    let {controller}=Ammo.castObject(rigidBody.getUserPointer(),Ammo.btVector3);
+    return controller;
+    
+  }
 }
