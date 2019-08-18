@@ -1,5 +1,8 @@
 export function degToRad(deg){
-  return deg/360*Math.PI*2;
+  return deg/180*Math.PI;
+}
+export function radToDeg(rad){
+  return rad*180/Math.PI;
 }
 export function random(min=null,max=null){
   if(min==null&&max&&null){
