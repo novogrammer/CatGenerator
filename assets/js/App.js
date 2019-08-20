@@ -144,7 +144,7 @@ export default class App{
       this.fullscreen();
     });
   }
-  spawn({position={x:0,y:5,z:0},velocity={x:0,y:0,z:0}}){
+  spawn({position={x:0,y:5,z:0},velocity={x:0,y:0,z:0},scale=1,massScale=1}){
 
 
     let noise=this.makeNoise();
@@ -162,11 +162,16 @@ export default class App{
     
     let {size}=cat;
     
+    cat.scale.set(scale,scale,scale)
+    size.x*=scale;
+    size.y*=scale;
+    size.z*=scale;
+    
     let positionForAmmo=new Ammo.btVector3(position.x,position.y,position.z);
     let velocityForAmmo=new Ammo.btVector3(velocity.x,velocity.y,velocity.z);
     
     let halfSize=new Ammo.btVector3(size.x*0.5,size.y*0.5,size.z*0.5);
-    let mass=1;
+    let mass=1*massScale;
     let transform=new Ammo.btTransform();
     transform.setIdentity();
     transform.setOrigin(positionForAmmo);
@@ -191,33 +196,14 @@ export default class App{
     this.controllerManager.add(catController);
     
     
-    const hasWeight=false;
-    if(hasWeight){
-      let weightController=this.makeBox({
-        position:{x:position.x,y:position.y+size.y*-0.5+0.1*0.5,z:position.z},
-        size:{x:0.1,y:0.1,z:0.1},
-        mass:10,
-        ControllerClass:EmptyController,
-      });
-      var frameInA=new Ammo.btTransform();
-      frameInA.setIdentity();
-      frameInA.setOrigin(new Ammo.btVector3(0,size.y*-0.5,0));
-      var frameInB=new Ammo.btTransform();
-      frameInB.setIdentity();
-      //frameInB.setOrigin(new Ammo.btVector3(0,-0.1,0));
-      frameInB.setOrigin(new Ammo.btVector3(0,-0.2,0));
-      
-      let anchor=new Ammo.btFixedConstraint(body,weightController.body,frameInA,frameInB);
-      physicsWorld.addConstraint( anchor, true );
-    }
-    
-    const hasSensor=true;
+    let hasSensor=true;
     if(hasSensor){
-      let offsetY=0.05*0.5;
+      
+      let offsetY=0.05*0.5*scale;
       let catSensorController=this.makeBox({
         position:{x:position.x,y:position.y+size.y*-0.5-offsetY,z:position.z},
-        size:{x:0.05,y:0.05,z:0.05},
-        mass:0.001,
+        size:{x:0.05*scale,y:0.05*scale,z:0.05*scale},
+        mass:0.001*massScale,
         isSensor:true,
         ControllerClass:CatSensorController,
       });
@@ -379,7 +365,7 @@ export default class App{
         }
       }
       */
-      this.spawn({position:{x:0,y:1,z:0}});
+      this.spawn({position:{x:0,y:1,z:0},scale:Math.pow(10,Math.random())});
 
     }
     /*

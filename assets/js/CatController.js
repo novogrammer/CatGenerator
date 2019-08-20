@@ -27,7 +27,8 @@ export default class CatController extends ControllerBase{
   update(){
     let {body,catSensorController}=this;
     let identityQuaternion=new THREE.Quaternion();
-    if(0<catSensorController.currentContactSet.size){
+    //walk
+    if(!!catSensorController && 0<catSensorController.currentContactSet.size){
       let velocity=body.getLinearVelocity();
       if(velocity.length()<CAT_MAX_VELOCITY){
         let force=new Ammo.btVector3(0,0,CAT_WALK_FORCE);
