@@ -8,6 +8,10 @@ import {
   difference,
 } from "./math_utils.js";
 
+import {
+  convertVector3AmmoToThree,
+  convertQuaternionAmmoToThree,
+} from "./ammo_and_three_utils.js";
 
 
 export default class ControllerBase extends EventEmitter3{
@@ -64,14 +68,8 @@ export default class ControllerBase extends EventEmitter3{
         }
       });
     }
-    
-    object3d.position.set(transform.getOrigin().x(),transform.getOrigin().y(),transform.getOrigin().z());
-    object3d.quaternion.set(
-      transform.getRotation().x(),
-      transform.getRotation().y(),
-      transform.getRotation().z(),
-      transform.getRotation().w()
-    );
+    convertVector3AmmoToThree(transform.getOrigin(),object3d.position);
+    convertQuaternionAmmoToThree(transform.getRotation(),object3d.quaternion)
     object3d.dispatchEvent({type:"updateanimation"});
   }
   destroy(){

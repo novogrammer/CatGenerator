@@ -7,6 +7,12 @@ import {
 import {
   degToRad,
 } from "./math_utils.js";
+import {
+  convertVector3AmmoToThree,
+  convertVector3ThreeToAmmo,
+  convertQuaternionAmmoToThree,
+  convertQuaternionThreeToAmmo,
+} from "./ammo_and_three_utils.js";
 
 
 import * as THREE from "./three/build/three.module.js";
@@ -144,7 +150,7 @@ export default class App{
       this.fullscreen();
     });
   }
-  spawn({position={x:0,y:5,z:0},velocity={x:0,y:0,z:0},scale=1,massScale=1}){
+  spawn({position=new THREE.Vector3(0,5,0),velocity=new THREE.Vector3(0,0,0),scale=1,massScale=1}={}){
 
 
     let noise=this.makeNoise();
@@ -167,15 +173,11 @@ export default class App{
     size.y*=scale;
     size.z*=scale;
     
-    let positionForAmmo=new Ammo.btVector3(position.x,position.y,position.z);
-    let velocityForAmmo=new Ammo.btVector3(velocity.x,velocity.y,velocity.z);
-    
-    let halfSize=new Ammo.btVector3(size.x*0.5,size.y*0.5,size.z*0.5);
     let mass=1*massScale;
     let transform=new Ammo.btTransform();
     transform.setIdentity();
-    transform.setOrigin(positionForAmmo);
-    let shape=new Ammo.btBoxShape(halfSize);
+    transform.setOrigin(convertVector3ThreeToAmmo(position));
+    let shape=new Ammo.btBoxShape(convertVector3ThreeToAmmo(size.clone().multiplyScalar(0.5)));
     let localInertia=new Ammo.btVector3(0,0,0);
     shape.calculateLocalInertia(mass,localInertia);
     
@@ -188,7 +190,7 @@ export default class App{
         localInertia
       )
     );
-    body.setLinearVelocity(velocityForAmmo);
+    body.setLinearVelocity(convertVector3ThreeToAmmo(velocity));
     let {scene}=this.three;
     let {physicsWorld}=this.ammo;
     
@@ -201,8 +203,8 @@ export default class App{
       
       let offsetY=0.05*0.5*scale;
       let catSensorController=this.makeBox({
-        position:{x:position.x,y:position.y+size.y*-0.5-offsetY,z:position.z},
-        size:{x:0.05*scale,y:0.05*scale,z:0.05*scale},
+        position:position.clone().add({x:0,y:size.y*-0.5-offsetY,z:0}),
+        size:new THREE.Vector3(0.05,0.05,0.05).multiplyScalar(scale),
         mass:0.001*massScale,
         isSensor:true,
         ControllerClass:CatSensorController,
@@ -235,7 +237,7 @@ export default class App{
     material=new THREE.MeshBasicMaterial({flatShading:true}),
     isSensor=false,
     ControllerClass=EmptyController,
-  }){
+  }={}){
     let {scene}=this.three;
     let mesh=null;
     {
@@ -248,15 +250,12 @@ export default class App{
     let {physicsWorld}=this.ammo;
     let body=null;
     {
-      let positionForAmmo=new Ammo.btVector3(position.x,position.y,position.z);
-      let quaternionForAmmo=new Ammo.btQuaternion(quaternion.x,quaternion.y,quaternion.z,quaternion.w);
-      let halfSize=new Ammo.btVector3(size.x*0.5,size.y*0.5,size.z*0.5);
       let transform=new Ammo.btTransform();
       transform.setIdentity();
-      transform.setOrigin(positionForAmmo);
-      transform.setRotation(quaternionForAmmo);
+      transform.setOrigin(convertVector3ThreeToAmmo(position));
+      transform.setRotation(convertQuaternionThreeToAmmo(quaternion));
       
-      let shape=new Ammo.btBoxShape(halfSize);
+      let shape=new Ammo.btBoxShape(convertVector3ThreeToAmmo(size.clone().multiplyScalar(0.5)));
       let localInertia=new Ammo.btVector3(0,0,0);
       shape.calculateLocalInertia(mass,localInertia);
       body=new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(
@@ -361,11 +360,11 @@ export default class App{
         let x=ix*-0.3+1
         for(let iy=0;iy<5;++iy){
           let y=iy*0.5+0.2;
-          this.spawn({position:{x:x,y:y,z:0}});
+          this.spawn({position:new THREE.Vector3(x,y,0)});
         }
       }
       */
-      this.spawn({position:{x:0,y:1,z:0},scale:Math.pow(10,Math.random())});
+      this.spawn({position:new THREE.Vector3(0,1,0),scale:Math.pow(1,Math.random())});
 
     }
     /*

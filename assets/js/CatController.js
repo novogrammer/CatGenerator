@@ -14,6 +14,14 @@ import {
   radToDeg,
 } from "./math_utils.js";
 
+
+import {
+  convertVector3AmmoToThree,
+  convertVector3ThreeToAmmo,
+  convertQuaternionAmmoToThree,
+  convertQuaternionThreeToAmmo,
+} from "./ammo_and_three_utils.js";
+
 import ControllerBase from "./ControllerBase.js";
 
 export default class CatController extends ControllerBase{
@@ -35,17 +43,8 @@ export default class CatController extends ControllerBase{
         body.applyCentralLocalForce(force);
       }
       let transform=body.getCenterOfMassTransform();
-      let rotation=new THREE.Quaternion(
-        transform.getRotation().x(),
-        transform.getRotation().y(),
-        transform.getRotation().z(),
-        transform.getRotation().w()
-      );
-      let origin=new THREE.Vector3(
-        transform.getOrigin().x(),
-        transform.getOrigin().y(),
-        transform.getOrigin().z()
-      );
+      let rotation=convertQuaternionAmmoToThree(transform.getRotation());
+      let origin=convertVector3AmmoToThree(transform.getOrigin());
       let targetPosition=new THREE.Vector3(1,origin.y,-1);
       let targetVector=targetPosition.clone().sub(origin).normalize();
       let currentVector=new THREE.Vector3(0,0,1).applyQuaternion(rotation);
@@ -58,12 +57,7 @@ export default class CatController extends ControllerBase{
         
         let newRotation=rotation.clone().multiply(rotationForNow);
         let newTransform=new Ammo.btTransform();
-        newTransform.setRotation(new Ammo.btQuaternion(
-          newRotation.x,
-          newRotation.y,
-          newRotation.z,
-          newRotation.w
-        ));
+        newTransform.setRotation(convertQuaternionThreeToAmmo(newRotation));
         newTransform.setOrigin(transform.getOrigin());
         body.setCenterOfMassTransform(newTransform);
       }
