@@ -28,9 +28,13 @@ export default class CatController extends ControllerBase{
   constructor(params){
     super(Object.assign({tags:["cat","canwalk"],reportTags:[]},params));
     this.catSensorController=null;
+    this.momCatController=null;
+    this.catParameters=null;
   }
-  assign({catSensorController}){
+  assign({catSensorController,momCatController,catParameters}){
     this.catSensorController=catSensorController;
+    this.momCatController=momCatController;
+    this.catParameters=catParameters;
   }
   update(){
     let {body,catSensorController}=this;

@@ -11,11 +11,11 @@ export default class ControllerManager{
     this.dispatcher=dispatcher;
     this.controllers=[];
   }
-  add(target){
+  register(target){
     target.register();
     this.controllers.push(target);
   }
-  remove(target){
+  unregister(target){
     target.unregister();
     this.controllers=this.controllers.filter((controller)=>controller!=target);
   }

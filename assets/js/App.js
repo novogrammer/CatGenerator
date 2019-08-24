@@ -2,6 +2,10 @@ import {
   FPS,
   IS_DEBUG,
   GRAVITY_CONSTANT,
+  CAT_SCALE,
+  CAT_MASS,
+  MOM_CAT_SCALE,
+  MOM_CAT_MASS,
 } from "./constants.js";
 
 import {
@@ -28,6 +32,7 @@ import CatObject from "./CatObject.js";
 
 import ControllerManager from "./ControllerManager.js";
 import GroundController from "./GroundController.js";
+import MomCatController from "./MomCatController.js";
 import CatController from "./CatController.js";
 import CatSensorController from "./CatSensorController.js";
 import EmptyController from "./EmptyController.js";
@@ -44,6 +49,8 @@ export default class App{
     this.ammo=null;
     this.stats=null;
     this.controllerManager=null;
+    this.catControllers=[];//except MomCat
+    this.momCatController=null;
     
     this.setupThree();
     this.setupAmmo();
@@ -150,8 +157,34 @@ export default class App{
       this.fullscreen();
     });
   }
-  spawn({position=new THREE.Vector3(0,5,0),velocity=new THREE.Vector3(0,0,0),scale=1,massScale=1}={}){
+  grow({cat=null}={}){
+    let {object3d}=cat;
+    let temporaryGrownCat=this.spawn({
+      position:object3d.position,
+      scale:MOM_CAT_SCALE,
+      mass:MOM_CAT_MASS,
+      isTemporary:true,
+    });
+    this.cleanCats();
+    let momCatController=new MomCatController(temporaryGrownCat);
+    let {catSensorController}=temporaryGrownCat;
+    momCatController.assign({catSensorController});
+    
+    this.controllerManager.register(momCatController);
+    this.controllerManager.register(momCatController.catSensorController);
+    this.momCatController=momCatController;
 
+    
+  }
+  spawn({
+    position=new THREE.Vector3(0,5,0),
+    velocity=new THREE.Vector3(0,0,0),
+    scale=CAT_SCALE,
+    mass=CAT_MASS,
+    isTemporary=false,
+  }={}){
+
+    let {momCatController}=this;
 
     let catParameters=this.makeNoise();
     let catParametersString=this.toHexString(catParameters);
@@ -173,7 +206,6 @@ export default class App{
     size.y*=scale;
     size.z*=scale;
     
-    let mass=1*massScale;
     let transform=new Ammo.btTransform();
     transform.setIdentity();
     transform.setOrigin(convertVector3ThreeToAmmo(position));
@@ -195,19 +227,21 @@ export default class App{
     let {physicsWorld}=this.ammo;
     
     let catController=new CatController({world:physicsWorld,body:body,scene:scene,object3d:cat});
-    this.controllerManager.add(catController);
+    if(!isTemporary){
+      this.controllerManager.register(catController);
+      this.catControllers.push(catController);
+    }
     
-    
-    let hasSensor=true;
-    if(hasSensor){
+    {
       
       let offsetY=0.05*0.5*scale;
       let catSensorController=this.makeBox({
         position:position.clone().add({x:0,y:size.y*-0.5-offsetY,z:0}),
         size:new THREE.Vector3(0.05,0.05,0.05).multiplyScalar(scale),
-        mass:0.001*massScale,
+        mass:mass*0.001,
         isSensor:true,
         ControllerClass:CatSensorController,
+        isTemporary:false,//register later
       });
       var frameInA=new Ammo.btTransform();
       frameInA.setIdentity();
@@ -219,15 +253,37 @@ export default class App{
       //CF_NO_CONTACT_RESPONSE = 4
       catSensorController.body.setCollisionFlags(catSensorController.body.getCollisionFlags()|4);
       let anchor=new Ammo.btFixedConstraint(body,catSensorController.body,frameInA,frameInB);
-      physicsWorld.addConstraint( anchor, true );
       
       //assign
-      catController.assign({catSensorController});
+      catController.assign({catSensorController,momCatController,catParameters});
       catSensorController.assign({catController,anchor});
+      
+      if(!isTemporary){
+        this.controllerManager.register(catSensorController);
+      }
     }
     
     
-    
+    return catController;
+  }
+  cleanCats(){
+    for(let catController of this.catControllers){
+      let {catSensorController}=catController;
+      this.controllerManager.unregister(catController);
+      catController.destroy();
+      this.controllerManager.unregister(catSensorController);
+      catSensorController.destroy();
+    }
+    this.catControllers=[];
+    let {momCatController}=this;
+    if(!!momCatController){
+      let {catSensorController}=momCatController;
+      this.controllerManager.unregister(momCatController);
+      //momCatController.destroy();
+      this.controllerManager.unregister(catSensorController);
+      catSensorController.destroy();
+      this.momCatController=null;
+    }
   }
   makeBox({
     position=new THREE.Vector3(),
@@ -237,6 +293,7 @@ export default class App{
     material=new THREE.MeshBasicMaterial({flatShading:true}),
     isSensor=false,
     ControllerClass=EmptyController,
+    isTemporary=false,
   }={}){
     let {scene}=this.three;
     let mesh=null;
@@ -268,7 +325,9 @@ export default class App{
       body.setFriction(1);
     }
     let controller=new ControllerClass({world:physicsWorld,body:body,scene:scene,object3d:mesh});
-    this.controllerManager.add(controller);
+    if(!isTemporary){
+      this.controllerManager.register(controller);
+    }
     return controller;
     
   }
@@ -364,17 +423,11 @@ export default class App{
         }
       }
       */
-      this.spawn({position:new THREE.Vector3(0,1,0),scale:Math.pow(1,Math.random())});
+      let catController=this.spawn({position:new THREE.Vector3(0,1,0)});
+      //let momCatController=this.grow({cat:catController});
+      
 
     }
-    /*
-    if(e.key.toUpperCase()=="Q"){
-      for(let controller of this.controllerManager.controllers){
-        controller.destroy();
-      }
-      this.controllerManager.controllers=[];
-    }
-    */
   }
   onMousemove(e){
     let {originalEvent}=e;
