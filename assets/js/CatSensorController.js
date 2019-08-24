@@ -9,7 +9,7 @@ export default class CatSensorController extends ControllerBase{
   }
   assign({catController,anchor}){
     this.catController=catController;
-    this.constraintsToDestroy.push(anchor);
+    this.constraints.push(anchor);
   }
   onEnter(other){
     super.onEnter(other);

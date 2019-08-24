@@ -26,7 +26,7 @@ export default class ControllerBase extends EventEmitter3{
     this.transform=new Ammo.btTransform();
     this.currentContactSet=new Set();
     this.previousContactSet=[];
-    this.constraintsToDestroy=[];
+    this.constraints=[];
   }
   registerUserPointer(){
     let {body}=this;
@@ -75,7 +75,7 @@ export default class ControllerBase extends EventEmitter3{
     scene.add(object3d);
     world.addRigidBody(body);
     
-    for(let constraint of this.constraintsToDestroy){
+    for(let constraint of this.constraints){
       world.addConstraint( constraint, true );
     }
     
@@ -93,7 +93,7 @@ export default class ControllerBase extends EventEmitter3{
     
     world.removeRigidBody(body);
     
-    for(let constraint of this.constraintsToDestroy){
+    for(let constraint of this.constraints){
       world.removeConstraint(constraint);
     }
     
@@ -103,7 +103,7 @@ export default class ControllerBase extends EventEmitter3{
     let {world,body,scene,object3d}=this;
     
     Ammo.destroy(body);
-    for(let constraint of this.constraintsToDestroy){
+    for(let constraint of this.constraints){
       Ammo.destroy(constraint);
     }
     Ammo.destroy(this.transform);
