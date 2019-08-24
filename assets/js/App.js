@@ -153,10 +153,10 @@ export default class App{
   spawn({position=new THREE.Vector3(0,5,0),velocity=new THREE.Vector3(0,0,0),scale=1,massScale=1}={}){
 
 
-    let noise=this.makeNoise();
-    let texture=new THREE.TextureLoader().load('/cat/'+noise);
+    let catParameters=this.makeNoise();
+    let catParametersString=this.toHexString(catParameters);
     
-    let object3d=new THREE.Object3D();
+    let texture=new THREE.TextureLoader().load('/cat/'+catParametersString);
     
     let material=new THREE.MeshLambertMaterial({
       map:texture,
@@ -437,15 +437,23 @@ export default class App{
     this.mouseDeltaPosition.y=0;
   }
   makeNoise(){
-    let noise="";
+    let noise=[];
     //let myRandom=()=>(Math.random() + Math.random())/2;
     let myRandom=()=>Math.random();
     for(let i=0;i<100;++i){
       let n=Math.floor(myRandom()*256);
-      noise+=((n&0xf0)>>4).toString(16)
-      noise+=(n&0x0f).toString(16);
+      noise.push(n);
     }
     return noise;
+    
+  }
+  toHexString(valueArray){
+    let hexString=valueArray.reduce((hexString,n)=>{
+      hexString+=((n&0xf0)>>4).toString(16);
+      hexString+=(n&0x0f).toString(16);
+      return hexString;
+    },"");
+    return hexString;
     
   }
   static load(){
