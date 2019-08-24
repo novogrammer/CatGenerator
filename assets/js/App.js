@@ -241,7 +241,7 @@ export default class App{
         mass:mass*0.001,
         isSensor:true,
         ControllerClass:CatSensorController,
-        isTemporary:false,//register later
+        isTemporary:true,//register later
       });
       var frameInA=new Ammo.btTransform();
       frameInA.setIdentity();
