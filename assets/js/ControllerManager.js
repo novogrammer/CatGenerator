@@ -12,9 +12,11 @@ export default class ControllerManager{
     this.controllers=[];
   }
   add(target){
+    target.register();
     this.controllers.push(target);
   }
   remove(target){
+    target.unregister();
     this.controllers=this.controllers.filter((controller)=>controller!=target);
   }
   updateContact(){

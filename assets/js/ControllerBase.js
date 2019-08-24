@@ -27,20 +27,18 @@ export default class ControllerBase extends EventEmitter3{
     this.currentContactSet=new Set();
     this.previousContactSet=[];
     this.constraintsToDestroy=[];
-    scene.add(object3d);
-    world.addRigidBody(body);
-    this.setupUserPointer();
-    this.setupEvents();
   }
-  setupUserPointer(){
+  registerUserPointer(){
     let {body}=this;
     var dummyObject=new Ammo.btVector3(0,0,0);
     dummyObject.controller=this;
     body.setUserPointer(dummyObject);
   }
-  setupEvents(){
-    this.on("enter",this.onEnter.bind(this));
-    this.on("leave",this.onLeave.bind(this));
+  unregisterUserPointer(){
+    let {body}=this;
+    let dummyObject=Ammo.castObject(body.getUserPointer(),Ammo.btVector3);
+    dummyObject.controller=null;
+    Ammo.destroy(dummyObject);
   }
   beginContact(){
     this.previousContactSet=this.currentContactSet;
@@ -72,23 +70,44 @@ export default class ControllerBase extends EventEmitter3{
     convertQuaternionAmmoToThree(transform.getRotation(),object3d.quaternion)
     object3d.dispatchEvent({type:"updateanimation"});
   }
+  register(){
+    let {world,body,scene,object3d}=this;
+    scene.add(object3d);
+    world.addRigidBody(body);
+    
+    for(let constraint of this.constraintsToDestroy){
+      world.addConstraint( constraint, true );
+    }
+    
+    
+    this.registerUserPointer();
+    this.on("enter",this.onEnter.bind(this));
+    this.on("leave",this.onLeave.bind(this));
+  }
+  unregister(){
+    let {world,body,scene,object3d}=this;
+    this.off("enter",this.onEnter.bind(this));
+    this.off("leave",this.onLeave.bind(this));
+    
+    this.unregisterUserPointer();
+    
+    world.removeRigidBody(body);
+    
+    for(let constraint of this.constraintsToDestroy){
+      world.removeConstraint(constraint);
+    }
+    
+    scene.remove(object3d);
+  }
   destroy(){
     let {world,body,scene,object3d}=this;
     
-    //destroy UserPointer
-    let dummyObject=Ammo.castObject(body.getUserPointer(),Ammo.btVector3);
-    dummyObject.controller=null;
-    Ammo.destroy(dummyObject);
-    
-    world.removeRigidBody(body);
     Ammo.destroy(body);
     for(let constraint of this.constraintsToDestroy){
-      world.removeConstraint(constraint);
       Ammo.destroy(constraint);
     }
     Ammo.destroy(this.transform);
     
-    scene.remove(object3d);
     object3d.traverse((target)=>{
       let {geometry,material}=target;
       //share geometry
