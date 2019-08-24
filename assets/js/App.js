@@ -158,7 +158,11 @@ export default class App{
     });
   }
   grow({cat=null}={}){
-    let {object3d}=cat;
+    
+    if(!cat){
+      return;
+    }
+    let {object3d,catParameters}=cat;
     let temporaryGrownCat=this.spawn({
       position:object3d.position,
       scale:MOM_CAT_SCALE,
@@ -168,7 +172,12 @@ export default class App{
     this.cleanCats();
     let momCatController=new MomCatController(temporaryGrownCat);
     let {catSensorController}=temporaryGrownCat;
-    momCatController.assign({catSensorController});
+    momCatController.assign({
+      catSensorController,
+      catParameters,
+    });
+    //anchor was already assigned
+    catSensorController.catController=momCatController;
     
     this.controllerManager.register(momCatController);
     this.controllerManager.register(momCatController.catSensorController);
@@ -186,7 +195,13 @@ export default class App{
 
     let {momCatController}=this;
 
-    let catParameters=this.makeNoise();
+    
+    let catParameters;
+    if(!!momCatController){
+      catParameters=momCatController.catParameters;
+    }else{
+      catParameters=this.makeNoise();
+    }
     let catParametersString=this.toHexString(catParameters);
     
     let texture=new THREE.TextureLoader().load('/cat/'+catParametersString);
@@ -279,7 +294,7 @@ export default class App{
     if(!!momCatController){
       let {catSensorController}=momCatController;
       this.controllerManager.unregister(momCatController);
-      //momCatController.destroy();
+      momCatController.destroy();
       this.controllerManager.unregister(catSensorController);
       catSensorController.destroy();
       this.momCatController=null;
@@ -427,6 +442,12 @@ export default class App{
       //let momCatController=this.grow({cat:catController});
       
 
+    }
+    if(e.key.toUpperCase()=="M"){
+      //TODO
+      let catController=this.spawn({position:new THREE.Vector3(0,1,0)});
+      let momCatController=this.grow({cat:catController});
+      
     }
   }
   onMousemove(e){

@@ -27,18 +27,25 @@ export default class ControllerBase extends EventEmitter3{
     this.currentContactSet=new Set();
     this.previousContactSet=[];
     this.constraints=[];
+    this.isRegistered=false;
   }
   registerUserPointer(){
     let {body}=this;
     var dummyObject=new Ammo.btVector3(0,0,0);
     dummyObject.controller=this;
     body.setUserPointer(dummyObject);
+    this.isRegistered=true;
   }
   unregisterUserPointer(){
+    if(!this.isRegistered){
+      debugger;
+      throw new Error("controller is not registered");
+    }
     let {body}=this;
     let dummyObject=Ammo.castObject(body.getUserPointer(),Ammo.btVector3);
     dummyObject.controller=null;
     Ammo.destroy(dummyObject);
+    this.isRegistered=false;
   }
   beginContact(){
     this.previousContactSet=this.currentContactSet;
