@@ -163,11 +163,13 @@ export default class App{
       return;
     }
     let {object3d,catParameters}=cat;
+    
     let temporaryGrownCat=this.spawn({
       position:object3d.position,
       scale:MOM_CAT_SCALE,
       mass:MOM_CAT_MASS,
       isTemporary:true,
+      catParameters,
     });
     this.cleanCats();
     let momCatController=new MomCatController(temporaryGrownCat);
@@ -191,17 +193,12 @@ export default class App{
     scale=CAT_SCALE,
     mass=CAT_MASS,
     isTemporary=false,
+    catParameters=this.makeNoise(),
   }={}){
 
     let {momCatController}=this;
 
     
-    let catParameters;
-    if(!!momCatController){
-      catParameters=momCatController.catParameters;
-    }else{
-      catParameters=this.makeNoise();
-    }
     let catParametersString=this.toHexString(catParameters);
     
     let texture=new THREE.TextureLoader().load('/cat/'+catParametersString);
@@ -438,7 +435,12 @@ export default class App{
         }
       }
       */
-      let catController=this.spawn({position:new THREE.Vector3(0,1,0)});
+      if(this.momCatController){
+        let catParameters=this.momCatController.catParameters;
+        let catController=this.spawn({position:new THREE.Vector3(0,1,0),catParameters});
+      }else{
+        let catController=this.spawn({position:new THREE.Vector3(0,1,0)});
+      }
       //let momCatController=this.grow({cat:catController});
       
 
