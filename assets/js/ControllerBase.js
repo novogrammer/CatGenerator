@@ -81,13 +81,13 @@ export default class ControllerBase extends EventEmitter3{
     
     
     this.registerUserPointer();
-    this.on("enter",this.onEnter.bind(this));
-    this.on("leave",this.onLeave.bind(this));
+    this.on("enter",this.onEnter,this);
+    this.on("leave",this.onLeave,this);
   }
   unregister(){
     let {world,body,scene,object3d}=this;
-    this.off("enter",this.onEnter.bind(this));
-    this.off("leave",this.onLeave.bind(this));
+    this.off("enter",this.onEnter,this);
+    this.off("leave",this.onLeave,this);
     
     this.unregisterUserPointer();
     
