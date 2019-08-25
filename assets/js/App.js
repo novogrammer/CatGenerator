@@ -443,7 +443,12 @@ export default class App{
       let {momCatController}=this;
       if(momCatController){
         let catParameters=momCatController.catParameters;
-        let catController=this.spawn({position:momCatController.getSpawnPoint(),catParameters});
+        let rotate180=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),degToRad(180));
+        let catController=this.spawn({
+          position:momCatController.getSpawnPoint(),
+          rotation:momCatController.getRotation().clone().multiply(rotate180),
+          catParameters,
+        });
       }else{
         let catController=this.spawn({position:new THREE.Vector3(0,1,0)});
       }

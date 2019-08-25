@@ -60,6 +60,10 @@ export default class MomCatController extends ControllerBase{
     let {object3d}=this;
     return object3d.localToWorld(MOM_CAT_SPAWN_POINT.clone());
   }
+  getRotation(){
+    let {object3d}=this;
+    return object3d.quaternion;
+  }
   update(){
     let {body,catSensorController,scene}=this;
     
