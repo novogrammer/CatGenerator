@@ -440,9 +440,10 @@ export default class App{
         }
       }
       */
-      if(this.momCatController){
-        let catParameters=this.momCatController.catParameters;
-        let catController=this.spawn({position:new THREE.Vector3(0,1,0),catParameters});
+      let {momCatController}=this;
+      if(momCatController){
+        let catParameters=momCatController.catParameters;
+        let catController=this.spawn({position:momCatController.getSpawnPoint(),catParameters});
       }else{
         let catController=this.spawn({position:new THREE.Vector3(0,1,0)});
       }

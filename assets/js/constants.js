@@ -28,3 +28,4 @@ export const MOM_CAT_WALK_FORCE=MOM_CAT_MASS*100;
 export const MOM_CAT_SCALE=2;
 //size: Vector3 {x: 0.3, y: 0.625, z: 0.8} 
 export const MOM_CAT_FORCE_POINT=new THREE.Vector3(0,0,0.2).multiplyScalar(MOM_CAT_SCALE);
+export const MOM_CAT_SPAWN_POINT=new THREE.Vector3(0,0,-0.3).multiplyScalar(MOM_CAT_SCALE);

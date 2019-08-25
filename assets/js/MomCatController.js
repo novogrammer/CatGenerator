@@ -7,6 +7,7 @@ import {
   MOM_CAT_FORCE_POINT,
   MAIN_CAMERA_NAME,
   MOUSE_VELOCITY_TO_FORCE,
+  MOM_CAT_SPAWN_POINT,
 } from "./constants.js"
 
 import * as THREE from "./three/build/three.module.js";
@@ -54,6 +55,10 @@ export default class MomCatController extends ControllerBase{
     mouseMatrix.multiply(cameraToWorldMatrix);
     mouseMatrix.multiply(worldToFloorMatrix);
     return mouseMatrix;
+  }
+  getSpawnPoint(){
+    let {object3d}=this;
+    return object3d.localToWorld(MOM_CAT_SPAWN_POINT.clone());
   }
   update(){
     let {body,catSensorController,scene}=this;
