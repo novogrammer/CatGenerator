@@ -355,7 +355,7 @@ export default class App{
       ground=this.makeBox({
         position:new THREE.Vector3(0,-1,0),
         quaternion:new THREE.Quaternion(),
-        size:new THREE.Vector3(10*1.5,2,10*1.5),
+        size:new THREE.Vector3(10,2,10),
         mass:0,
         material:new THREE.MeshLambertMaterial({
           flatShading:true,
