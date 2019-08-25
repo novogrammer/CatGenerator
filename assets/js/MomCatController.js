@@ -2,6 +2,11 @@
 import {
   IS_DEBUG,
   FPS,
+  MOM_CAT_MAX_VELOCITY,
+  MOM_CAT_WALK_FORCE,
+  MOM_CAT_FORCE_POINT,
+  MAIN_CAMERA_NAME,
+  MOUSE_VELOCITY_TO_FORCE,
 } from "./constants.js"
 
 import * as THREE from "./three/build/three.module.js";
@@ -26,15 +31,64 @@ export default class MomCatController extends ControllerBase{
     super(Object.assign({tags:["momcat","canwalk"],reportTags:[]},params));
     this.catSensorController=null;
     this.catParameters=null;
+    this.mousePosition=new THREE.Vector3();
+    this.mouseDeltaPosition=new THREE.Vector3();
+    this.body.setActivationState(4);//DISABLE_DEACTIVATION
   }
   assign({catSensorController,catParameters}){
     this.catSensorController=catSensorController;
     this.catParameters=catParameters;
   }
+  makeMouseMatrix(){
+    let {scene}=this;
+    let camera=scene.getObjectByName(MAIN_CAMERA_NAME);
+    let cameraZ=new THREE.Vector3();
+    camera.getWorldDirection(cameraZ);
+    cameraZ.multiplyScalar(-1);
+    let py=new THREE.Vector3(0,1,0);
+    let px=py.clone().cross(cameraZ).normalize();
+    let pz=px.clone().cross(py).normalize();
+    let cameraToWorldMatrix=new THREE.Matrix4().makeBasis(px,py,pz);
+    let worldToFloorMatrix=new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(1,0,0),degToRad(90));
+    let mouseMatrix=new THREE.Matrix4();
+    mouseMatrix.multiply(cameraToWorldMatrix);
+    mouseMatrix.multiply(worldToFloorMatrix);
+    return mouseMatrix;
+  }
   update(){
-    let {body,catSensorController}=this;
+    let {body,catSensorController,scene}=this;
+    
+    this.mousePosition.add(this.mouseDeltaPosition);
+    /*if(!!catSensorController && 0<catSensorController.currentContactSet.size)*/{
+      let velocity=body.getLinearVelocity();
+      if(velocity.length()<MOM_CAT_MAX_VELOCITY){
+        let transform=body.getCenterOfMassTransform();
+        let quaternion=convertQuaternionAmmoToThree(transform.getRotation());
+        let relativePosition=convertQuaternionThreeToAmmo(MOM_CAT_FORCE_POINT.clone().applyQuaternion(quaternion));
+        
+        let limitedMouseForce=this.mouseDeltaPosition.clone().multiplyScalar(FPS*MOUSE_VELOCITY_TO_FORCE);
+        console.log(limitedMouseForce.length());
+        if(limitedMouseForce.length()>MOM_CAT_WALK_FORCE){
+          limitedMouseForce.normalize().multiplyScalar(MOM_CAT_WALK_FORCE);
+        }
+        
+        let mouseMatrix=this.makeMouseMatrix();
+        let force=convertVector3ThreeToAmmo(
+          limitedMouseForce.clone().applyMatrix4(mouseMatrix)
+        );
+        body.applyForce(force,relativePosition);
+        //body.applyForce(new Ammo.btVector3(0,MOM_CAT_WALK_FORCE,0),relativePosition);
+
+      }
+      
+    }
+    this.mouseDeltaPosition.set(0,0);
     super.update();
   }
+  destroy(){
+    super.destroy();
+  }
+  
   onEnter(other){
     super.onEnter(other);
     //console.log("MomCatController.prototype.onEnter");
@@ -42,6 +96,10 @@ export default class MomCatController extends ControllerBase{
   onLeave(other){
     super.onLeave(other);
     //console.log("MomCatController.prototype.onLeave");
+  }
+  onMousemove(e){
+    let {movementX,movementY}=e;
+    this.mouseDeltaPosition.add({x:movementX,y:movementY});
   }
   
 }

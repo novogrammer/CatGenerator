@@ -6,6 +6,7 @@ import {
   CAT_MASS,
   MOM_CAT_SCALE,
   MOM_CAT_MASS,
+  MAIN_CAMERA_NAME,
 } from "./constants.js";
 
 import {
@@ -77,6 +78,8 @@ export default class App{
     let controls = new OrbitControls( camera, renderer.domElement );
     controls.target.set(0,1,0);
     camera.position.set(0,1,5);
+    camera.name=MAIN_CAMERA_NAME;
+    scene.add(camera);
     
     let ambientLight=new THREE.AmbientLight(0x707070);
     scene.add(ambientLight);
@@ -190,6 +193,7 @@ export default class App{
   spawn({
     position=new THREE.Vector3(0,5,0),
     velocity=new THREE.Vector3(0,0,0),
+    rotation=new THREE.Quaternion(),
     scale=CAT_SCALE,
     mass=CAT_MASS,
     isTemporary=false,
@@ -219,7 +223,7 @@ export default class App{
     size.z*=scale;
     
     let transform=new Ammo.btTransform();
-    transform.setIdentity();
+    transform.setRotation(convertQuaternionThreeToAmmo(rotation));
     transform.setOrigin(convertVector3ThreeToAmmo(position));
     let shape=new Ammo.btBoxShape(convertVector3ThreeToAmmo(size.clone().multiplyScalar(0.5)));
     let localInertia=new Ammo.btVector3(0,0,0);
@@ -456,6 +460,9 @@ export default class App{
     let {originalEvent}=e;
     let {movementX,movementY}=originalEvent;
     //console.log(movementX,movementY);
+    if(!!this.momCatController){
+      this.momCatController.onMousemove(originalEvent);
+    }
     this.mouseDeltaPosition.x+=movementX;
     this.mouseDeltaPosition.y+=movementY;
 
