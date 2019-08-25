@@ -74,11 +74,12 @@ export default class App{
     renderer.sortObjects=false;
     let scene=new THREE.Scene();
     let camera=new THREE.PerspectiveCamera( 60, window.innerWidth/window.innerHeight, 0.1, 100 );
+    camera.position.set(0,10,10);
+    camera.name=MAIN_CAMERA_NAME;
     
     let controls = new OrbitControls( camera, renderer.domElement );
     controls.target.set(0,1,0);
-    camera.position.set(0,1,5);
-    camera.name=MAIN_CAMERA_NAME;
+    controls.update();
     scene.add(camera);
     
     let ambientLight=new THREE.AmbientLight(0x707070);
