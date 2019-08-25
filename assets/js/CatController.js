@@ -36,6 +36,13 @@ export default class CatController extends ControllerBase{
     this.momCatController=momCatController;
     this.catParameters=catParameters;
   }
+  getMomPosition(){
+    let {momCatController}=this;
+    if(!momCatController){
+      return new THREE.Vector3(0,0,0);
+    }
+    return momCatController.object3d.position.clone();
+  }
   update(){
     let {body,catSensorController}=this;
     let identityQuaternion=new THREE.Quaternion();
@@ -49,7 +56,8 @@ export default class CatController extends ControllerBase{
       let transform=body.getCenterOfMassTransform();
       let rotation=convertQuaternionAmmoToThree(transform.getRotation());
       let origin=convertVector3AmmoToThree(transform.getOrigin());
-      let targetPosition=new THREE.Vector3(1,origin.y,-1);
+      let momPosition=this.getMomPosition();
+      let targetPosition=new THREE.Vector3(momPosition.x,origin.y,momPosition.z);
       let targetVector=targetPosition.clone().sub(origin).normalize();
       let currentVector=new THREE.Vector3(0,0,1).applyQuaternion(rotation);
       if(0<targetVector.length()){
