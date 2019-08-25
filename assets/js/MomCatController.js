@@ -59,7 +59,8 @@ export default class MomCatController extends ControllerBase{
     let {body,catSensorController,scene}=this;
     
     this.mousePosition.add(this.mouseDeltaPosition);
-    /*if(!!catSensorController && 0<catSensorController.currentContactSet.size)*/{
+    let canMove=!!catSensorController && 0<catSensorController.currentContactSet.size;
+    if(canMove){
       let velocity=body.getLinearVelocity();
       if(velocity.length()<MOM_CAT_MAX_VELOCITY){
         let transform=body.getCenterOfMassTransform();
