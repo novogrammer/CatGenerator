@@ -7,6 +7,7 @@ import {
   MOM_CAT_SCALE,
   MOM_CAT_MASS,
   MAIN_CAMERA_NAME,
+  ROOM_SIZE,
 } from "./constants.js";
 
 import {
@@ -366,10 +367,11 @@ export default class App{
     let {physicsWorld}=this.ammo;
     let ground=null;
     {
+      const GROUND_HEIGHT=2;
       ground=this.makeBox({
-        position:new THREE.Vector3(0,-1,0),
+        position:new THREE.Vector3(0,GROUND_HEIGHT*-0.5,0),
         quaternion:new THREE.Quaternion(),
-        size:new THREE.Vector3(10,2,10),
+        size:new THREE.Vector3(ROOM_SIZE.x,GROUND_HEIGHT,ROOM_SIZE.z),
         mass:0,
         material:new THREE.MeshLambertMaterial({
           flatShading:true,
@@ -377,6 +379,49 @@ export default class App{
         ControllerClass:GroundController,
       });
       
+    }
+    {
+      const WALL_DEPTH=1;
+      let eastWall=this.makeBox({
+        position:new THREE.Vector3((ROOM_SIZE.x+WALL_DEPTH)*0.5,ROOM_SIZE.y*0.5,0),
+        quaternion:new THREE.Quaternion(),
+        size:new THREE.Vector3(WALL_DEPTH,ROOM_SIZE.y,ROOM_SIZE.z),
+        mass:0,
+        material:new THREE.MeshLambertMaterial({
+          flatShading:true,
+        }),
+        ControllerClass:GroundController,
+      });
+      let westWall=this.makeBox({
+        position:new THREE.Vector3((ROOM_SIZE.x+WALL_DEPTH)*-0.5,ROOM_SIZE.y*0.5,0),
+        quaternion:new THREE.Quaternion(),
+        size:new THREE.Vector3(WALL_DEPTH,ROOM_SIZE.y,ROOM_SIZE.z),
+        mass:0,
+        material:new THREE.MeshLambertMaterial({
+          flatShading:true,
+        }),
+        ControllerClass:GroundController,
+      });
+      let southWall=this.makeBox({
+        position:new THREE.Vector3(0,ROOM_SIZE.y*0.5,(ROOM_SIZE.z+WALL_DEPTH)*0.5),
+        quaternion:new THREE.Quaternion(),
+        size:new THREE.Vector3(ROOM_SIZE.x,ROOM_SIZE.y,WALL_DEPTH),
+        mass:0,
+        material:new THREE.MeshLambertMaterial({
+          flatShading:true,
+        }),
+        ControllerClass:GroundController,
+      });
+      let northWall=this.makeBox({
+        position:new THREE.Vector3(0,ROOM_SIZE.y*0.5,(ROOM_SIZE.z+WALL_DEPTH)*-0.5),
+        quaternion:new THREE.Quaternion(),
+        size:new THREE.Vector3(ROOM_SIZE.x,ROOM_SIZE.y,WALL_DEPTH),
+        mass:0,
+        material:new THREE.MeshLambertMaterial({
+          flatShading:true,
+        }),
+        ControllerClass:GroundController,
+      });
     }
     if(false){
       let blender=this.makeBox({

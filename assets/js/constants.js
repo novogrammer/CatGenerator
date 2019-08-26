@@ -9,6 +9,8 @@ export const GRAVITY_CONSTANT=9.8;
 
 export const MAIN_CAMERA_NAME="MainCamera";
 
+export const ROOM_SIZE=new THREE.Vector3(10,2,10);
+
 //calculated in CatObject
 export const CAT_OBJECT_AABB=new THREE.Box3(new THREE.Vector3(-0.15,-0.275,-0.35),new THREE.Vector3(0.15,0.35,0.45));
 
@@ -18,6 +20,9 @@ export const CAT_WALK_FORCE=10;
 export const CAT_MAX_ANGLULAR_VELOCITY=degToRad(90);
 export const CAT_SCALE=1;
 export const CAT_MASS=1;
+
+export const CAT_SPAWN_RATE=1;
+export const CAT_MAX_QTY=100;
 
 export const MOM_CAT_MASS=1;
 
