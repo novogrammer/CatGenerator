@@ -43,11 +43,19 @@ export default class CatController extends ControllerBase{
     }
     return momCatController.object3d.position.clone();
   }
+  canWalk(){
+    let {catSensorController}=this;
+    if(!catSensorController){
+      return false;
+    }
+    return Array.from(catSensorController.currentContactSet)
+    .some((other)=>other.tags.includes("canwalk"))
+  }
   update(){
-    let {body,catSensorController}=this;
+    let {body}=this;
     let identityQuaternion=new THREE.Quaternion();
     //walk
-    if(!!catSensorController && 0<catSensorController.currentContactSet.size){
+    if(this.canWalk()){
       let velocity=body.getLinearVelocity();
       if(velocity.length()<CAT_MAX_VELOCITY){
         let force=new Ammo.btVector3(0,0,CAT_WALK_FORCE);

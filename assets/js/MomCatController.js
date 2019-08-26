@@ -64,12 +64,20 @@ export default class MomCatController extends ControllerBase{
     let {object3d}=this;
     return object3d.quaternion;
   }
+  canWalk(){
+    let {catSensorController}=this;
+    if(!catSensorController){
+      return false;
+    }
+    return Array.from(catSensorController.currentContactSet)
+    .some((other)=>other.tags.includes("canwalk"))
+  }
+  
   update(){
-    let {body,catSensorController,scene}=this;
+    let {body,scene}=this;
     
     this.mousePosition.add(this.mouseDeltaPosition);
-    let canMove=!!catSensorController && 0<catSensorController.currentContactSet.size;
-    if(canMove){
+    if(this.canWalk()){
       let velocity=body.getLinearVelocity();
       if(velocity.length()<MOM_CAT_MAX_VELOCITY){
         let transform=body.getCenterOfMassTransform();
