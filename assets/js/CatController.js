@@ -48,8 +48,7 @@ export default class CatController extends ControllerBase{
     if(!catSensorController){
       return false;
     }
-    return Array.from(catSensorController.currentContactSet)
-    .some((other)=>other.tags.includes("canwalk"))
+    return 0<catSensorController.findContactsByTag("canwalk").length;
   }
   update(){
     let {body}=this;

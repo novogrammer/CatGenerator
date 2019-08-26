@@ -138,6 +138,11 @@ export default class ControllerBase extends EventEmitter3{
       }
     }
   }
+  findContactsByTag(tag){
+    let {currentContactSet}=this;
+    return Array.from(currentContactSet)
+    .filter((other)=>other.tags.includes(tag))
+  }
   onEnter(other){
     //DO NOTHING
     //console.log("onEnter");
