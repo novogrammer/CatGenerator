@@ -283,6 +283,19 @@ export default class App{
     
     return catController;
   }
+  spawnFromMom(){
+    let {momCatController}=this;
+    if(momCatController){
+      let catParameters=momCatController.catParameters;
+      let rotate180=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),degToRad(180));
+      let catController=this.spawn({
+        position:momCatController.getSpawnPoint(),
+        rotation:momCatController.getRotation().clone().multiply(rotate180),
+        catParameters,
+      });
+    }
+    
+  }
   cleanCats(){
     for(let catController of this.catControllers){
       let {catSensorController}=catController;
@@ -442,13 +455,7 @@ export default class App{
       */
       let {momCatController}=this;
       if(momCatController){
-        let catParameters=momCatController.catParameters;
-        let rotate180=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),degToRad(180));
-        let catController=this.spawn({
-          position:momCatController.getSpawnPoint(),
-          rotation:momCatController.getRotation().clone().multiply(rotate180),
-          catParameters,
-        });
+        this.spawnFromMom();
       }else{
         let catController=this.spawn({position:new THREE.Vector3(0,1,0)});
       }
@@ -483,6 +490,7 @@ export default class App{
     $("#Fullscreen").toggle(!this.isFullscreen);
   }
   onTick(){
+    let {momCatController}=this;
     let {renderer,scene,camera,mesh,controls}=this.three;
     let {physicsWorld,dispatcher,blenderHinge,barSlider,barBody}=this.ammo;
     //console.log(performance.now());
@@ -512,6 +520,12 @@ export default class App{
       
     }
     */
+    
+    if(!!momCatController && momCatController.needsSpawn){
+      this.spawnFromMom();
+    }
+    
+    
     this.controllerManager.updateContact();
     this.controllerManager.update();
     physicsWorld.stepSimulation( 1/FPS, 10 );

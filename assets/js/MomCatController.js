@@ -8,6 +8,8 @@ import {
   MAIN_CAMERA_NAME,
   MOUSE_VELOCITY_TO_FORCE,
   MOM_CAT_SPAWN_POINT,
+  CAT_SPAWN_RATE,
+  CAT_MAX_QTY,
 } from "./constants.js"
 
 import * as THREE from "./three/build/three.module.js";
@@ -35,6 +37,8 @@ export default class MomCatController extends ControllerBase{
     this.mousePosition=new THREE.Vector3();
     this.mouseDeltaPosition=new THREE.Vector3();
     this.body.setActivationState(4);//DISABLE_DEACTIVATION
+    this.gameTime=0;
+    this.needsSpawn=false;
   }
   assign({catSensorController,catParameters}){
     this.catSensorController=catSensorController;
@@ -71,9 +75,32 @@ export default class MomCatController extends ControllerBase{
     }
     return 0<catSensorController.findContactsByTag("canwalk").length;
   }
+  isGoal(){
+    let {catSensorController}=this;
+    if(!catSensorController){
+      return false;
+    }
+    return 0<catSensorController.findContactsByTag("goal").length;
+  }
+  isStart(){
+    let {catSensorController}=this;
+    if(!catSensorController){
+      return false;
+    }
+    return 0<catSensorController.findContactsByTag("start").length;
+  }
   
   update(){
     let {body,scene}=this;
+    let dt=1/FPS;
+    let previousGameTime=this.gameTime;
+    
+    if(!this.isStart() && !this.isGoal()){
+      this.gameTime+=dt;
+    }
+    let previousCatCount=Math.floor(previousGameTime*CAT_SPAWN_RATE);
+    let currentCatCount=Math.floor(this.gameTime*CAT_SPAWN_RATE);
+    this.needsSpawn= currentCatCount<=CAT_MAX_QTY && previousCatCount!=currentCatCount
     
     this.mousePosition.add(this.mouseDeltaPosition);
     if(this.canWalk()){
