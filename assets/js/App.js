@@ -9,6 +9,8 @@ import {
   MAIN_CAMERA_NAME,
   ROOM_SIZE,
   GOAL_BOX,
+  CAT_PARAMETERS_QTY,
+  CAT_PARAMETER_VARIATION_RANGE,
 } from "./constants.js";
 
 import {
@@ -294,7 +296,7 @@ export default class App{
       let catController=this.spawn({
         position:momCatController.getSpawnPoint(),
         rotation:momCatController.getRotation().clone().multiply(rotate180),
-        catParameters,
+        catParameters:this.makeVariation(catParameters),
       });
     }
     
@@ -607,12 +609,18 @@ export default class App{
     let noise=[];
     //let myRandom=()=>(Math.random() + Math.random())/2;
     let myRandom=()=>Math.random();
-    for(let i=0;i<100;++i){
+    for(let i=0;i<CAT_PARAMETERS_QTY;++i){
       let n=myRandom();
       noise.push(n);
     }
     return noise;
-    
+  }
+  makeVariation(parameters){
+    let newParameters=parameters.map((n)=>{
+      let variation=(Math.random()-0.5)*CAT_PARAMETER_VARIATION_RANGE*2;
+      return Math.max(Math.min(n+variation,1),0);
+    })
+    return newParameters;
   }
   toHexString(valueArray){
     let hexString=valueArray.reduce((hexString,n)=>{

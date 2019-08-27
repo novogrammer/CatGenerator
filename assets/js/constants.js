@@ -12,6 +12,11 @@ export const MAIN_CAMERA_NAME="MainCamera";
 export const ROOM_SIZE=new THREE.Vector3(10,2,10);
 export const GOAL_BOX=new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(-4,-0.5,-4),new THREE.Vector3(2,1,2));
 
+export const CAT_PARAMETERS_QTY=100;
+export const CAT_PARAMETER_VARIATION_RANGE=0.4;
+
+
+
 //calculated in CatObject
 export const CAT_OBJECT_AABB=new THREE.Box3(new THREE.Vector3(-0.15,-0.275,-0.35),new THREE.Vector3(0.15,0.35,0.45));
 
