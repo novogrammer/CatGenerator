@@ -438,6 +438,7 @@ export default class App{
         size:size,
         mass:0,
         material:new THREE.MeshLambertMaterial({
+          color:0xff0000,
           flatShading:true,
         }),
         ControllerClass:GoalController,

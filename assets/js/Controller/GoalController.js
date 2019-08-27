@@ -1,3 +1,6 @@
+import {
+  IS_DEBUG,
+} from "../constants.js";
 
 
 import ControllerBase from "./ControllerBase.js";
@@ -13,6 +16,10 @@ export default class GoalController extends ControllerBase{
   onLeave(other){
     super.onLeave(other);
     //console.log("GroundController.prototype.onLeave");
+  }
+  update(){
+    this.object3d.visible=IS_DEBUG;
+    super.update();
   }
   
 }

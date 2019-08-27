@@ -1,3 +1,6 @@
+import {
+  IS_DEBUG,
+} from "../constants.js";
 
 
 import ControllerBase from "./ControllerBase.js";
@@ -18,6 +21,10 @@ export default class CatSensorController extends ControllerBase{
   onLeave(other){
     super.onLeave(other);
     //console.log("CatSensorController.prototype.onLeave");
+  }
+  update(){
+    this.object3d.visible=IS_DEBUG;
+    super.update();
   }
   
 }
