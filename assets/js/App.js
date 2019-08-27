@@ -608,7 +608,7 @@ export default class App{
     //let myRandom=()=>(Math.random() + Math.random())/2;
     let myRandom=()=>Math.random();
     for(let i=0;i<100;++i){
-      let n=Math.floor(myRandom()*256);
+      let n=myRandom();
       noise.push(n);
     }
     return noise;
@@ -616,8 +616,9 @@ export default class App{
   }
   toHexString(valueArray){
     let hexString=valueArray.reduce((hexString,n)=>{
-      hexString+=((n&0xf0)>>4).toString(16);
-      hexString+=(n&0x0f).toString(16);
+      let eightBits=Math.min(Math.max(Math.floor(n*256),0),255);
+      hexString+=((eightBits&0xf0)>>4).toString(16);
+      hexString+=(eightBits&0x0f).toString(16);
       return hexString;
     },"");
     return hexString;
