@@ -33,6 +33,8 @@ import Stats from "./stats/stats.module.js";
 
 import SkinnedCatObject from "./Object/SkinnedCatObject.js";
 import CatObject from "./Object/CatObject.js";
+import FloorObject from "./Object/FloorObject.js";
+import WallObject from "./Object/WallObject.js";
 
 
 import ControllerManager from "./Controller/ControllerManager.js";
@@ -494,7 +496,16 @@ export default class App{
       this.ammo.barSlider=barSlider;
       */
     }
-    
+    if(false){
+      let {scene}=this.three;
+      let floorObject=new FloorObject();
+      scene.add(floorObject);
+    }
+    if(false){
+      let {scene}=this.three;
+      let wallObject=new WallObject();
+      scene.add(wallObject);
+    }
   }
   lockPointer(){
     this.$View[0].requestPointerLock();
