@@ -31,8 +31,8 @@ import {OrbitControls} from "./three/examples/jsm/controls/OrbitControls.js";
 
 import Stats from "./stats/stats.module.js";
 
-import SkinnedCatObject from "./SkinnedCatObject.js";
-import CatObject from "./CatObject.js";
+import SkinnedCatObject from "./Object/SkinnedCatObject.js";
+import CatObject from "./Object/CatObject.js";
 
 
 import ControllerManager from "./Controller/ControllerManager.js";

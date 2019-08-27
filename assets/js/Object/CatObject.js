@@ -2,14 +2,14 @@ import {
   IS_DEBUG,
   FPS,
   CAT_OBJECT_AABB,
-} from "./constants.js";
+} from "../constants.js";
 
 import {
   map
-} from "./math_utils.js";
+} from "../math_utils.js";
 
 
-import * as THREE from "./three/build/three.module.js";
+import * as THREE from "../three/build/three.module.js";
 
 let geometryCache={};
 
