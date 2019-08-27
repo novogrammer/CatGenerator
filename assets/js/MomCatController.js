@@ -82,20 +82,12 @@ export default class MomCatController extends ControllerBase{
     }
     return 0<catSensorController.findContactsByTag("goal").length;
   }
-  isStart(){
-    let {catSensorController}=this;
-    if(!catSensorController){
-      return false;
-    }
-    return 0<catSensorController.findContactsByTag("start").length;
-  }
-  
   update(){
     let {body,scene}=this;
     let dt=1/FPS;
     let previousGameTime=this.gameTime;
     
-    if(!this.isStart() && !this.isGoal()){
+    if(!this.isGoal()){
       this.gameTime+=dt;
     }
     let previousCatCount=Math.floor(previousGameTime*CAT_SPAWN_RATE);

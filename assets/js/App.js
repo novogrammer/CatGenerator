@@ -8,6 +8,7 @@ import {
   MOM_CAT_MASS,
   MAIN_CAMERA_NAME,
   ROOM_SIZE,
+  GOAL_BOX,
 } from "./constants.js";
 
 import {
@@ -38,6 +39,7 @@ import MomCatController from "./MomCatController.js";
 import CatController from "./CatController.js";
 import CatSensorController from "./CatSensorController.js";
 import EmptyController from "./EmptyController.js";
+import GoalController from "./GoalController.js";
 
 
 export default class App{
@@ -421,6 +423,22 @@ export default class App{
           flatShading:true,
         }),
         ControllerClass:GroundController,
+      });
+    }
+    {
+      let center=new THREE.Vector3();
+      let size=new THREE.Vector3();
+      GOAL_BOX.getCenter(center);
+      GOAL_BOX.getSize(size);
+      let goal=this.makeBox({
+        position:center,
+        quaternion:new THREE.Quaternion(),
+        size:size,
+        mass:0,
+        material:new THREE.MeshLambertMaterial({
+          flatShading:true,
+        }),
+        ControllerClass:GoalController,
       });
     }
     if(false){
