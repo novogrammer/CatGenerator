@@ -5,14 +5,14 @@ import {
   CAT_MAX_VELOCITY,
   CAT_WALK_FORCE,
   CAT_MAX_ANGLULAR_VELOCITY,
-} from "./constants.js"
+} from "../constants.js"
 
-import * as THREE from "./three/build/three.module.js";
+import * as THREE from "../three/build/three.module.js";
 
 import {
   degToRad,
   radToDeg,
-} from "./math_utils.js";
+} from "../math_utils.js";
 
 
 import {
@@ -20,7 +20,7 @@ import {
   convertVector3ThreeToAmmo,
   convertQuaternionAmmoToThree,
   convertQuaternionThreeToAmmo,
-} from "./ammo_and_three_utils.js";
+} from "../ammo_and_three_utils.js";
 
 import ControllerBase from "./ControllerBase.js";
 

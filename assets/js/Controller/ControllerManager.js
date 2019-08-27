@@ -1,7 +1,7 @@
 
 import {
   IS_DEBUG,
-} from "./constants.js";
+} from "../constants.js";
 
 
 import ControllerBase from "./ControllerBase.js";

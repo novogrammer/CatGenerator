@@ -33,13 +33,13 @@ import SkinnedCatObject from "./SkinnedCatObject.js";
 import CatObject from "./CatObject.js";
 
 
-import ControllerManager from "./ControllerManager.js";
-import GroundController from "./GroundController.js";
-import MomCatController from "./MomCatController.js";
-import CatController from "./CatController.js";
-import CatSensorController from "./CatSensorController.js";
-import EmptyController from "./EmptyController.js";
-import GoalController from "./GoalController.js";
+import ControllerManager from "./Controller/ControllerManager.js";
+import GroundController from "./Controller/GroundController.js";
+import MomCatController from "./Controller/MomCatController.js";
+import CatController from "./Controller/CatController.js";
+import CatSensorController from "./Controller/CatSensorController.js";
+import EmptyController from "./Controller/EmptyController.js";
+import GoalController from "./Controller/GoalController.js";
 
 
 export default class App{

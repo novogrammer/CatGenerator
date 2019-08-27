@@ -2,16 +2,16 @@
 
 import {
   IS_DEBUG,
-} from "./constants.js";
+} from "../constants.js";
 
 import {
   difference,
-} from "./math_utils.js";
+} from "../math_utils.js";
 
 import {
   convertVector3AmmoToThree,
   convertQuaternionAmmoToThree,
-} from "./ammo_and_three_utils.js";
+} from "../ammo_and_three_utils.js";
 
 
 export default class ControllerBase extends EventEmitter3{

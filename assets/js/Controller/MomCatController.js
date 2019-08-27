@@ -10,14 +10,14 @@ import {
   MOM_CAT_SPAWN_POINT,
   CAT_SPAWN_RATE,
   CAT_MAX_QTY,
-} from "./constants.js"
+} from "../constants.js"
 
-import * as THREE from "./three/build/three.module.js";
+import * as THREE from "../three/build/three.module.js";
 
 import {
   degToRad,
   radToDeg,
-} from "./math_utils.js";
+} from "../math_utils.js";
 
 
 import {
@@ -25,7 +25,7 @@ import {
   convertVector3ThreeToAmmo,
   convertQuaternionAmmoToThree,
   convertQuaternionThreeToAmmo,
-} from "./ammo_and_three_utils.js";
+} from "../ammo_and_three_utils.js";
 
 import ControllerBase from "./ControllerBase.js";
 
