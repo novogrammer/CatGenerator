@@ -496,12 +496,12 @@ export default class App{
       this.ammo.barSlider=barSlider;
       */
     }
-    if(false){
+    {
       let {scene}=this.three;
       let floorObject=new FloorObject();
       scene.add(floorObject);
     }
-    if(false){
+    {
       let {scene}=this.three;
       let wallObject=new WallObject();
       scene.add(wallObject);
