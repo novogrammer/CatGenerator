@@ -35,7 +35,6 @@ export function coverRectRatio(rectOriginal,rectTarget){
 }
 export function coverRect(rectOriginal,rectTarget){
   let targetRatio=coverRectRatio(rectOriginal,rectTarget);
-  console.log(targetRatio);
   let width=rectOriginal.width*targetRatio;
   let height=rectOriginal.height*targetRatio;
   let cx=rectTarget.x+rectTarget.width*0.5;

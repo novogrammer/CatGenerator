@@ -103,7 +103,6 @@ export default class MomCatController extends ControllerBase{
         let relativePosition=convertQuaternionThreeToAmmo(MOM_CAT_FORCE_POINT.clone().applyQuaternion(quaternion));
         
         let limitedMouseForce=this.mouseDeltaPosition.clone().multiplyScalar(FPS*MOUSE_VELOCITY_TO_FORCE);
-        console.log(limitedMouseForce.length());
         if(limitedMouseForce.length()>MOM_CAT_WALK_FORCE){
           limitedMouseForce.normalize().multiplyScalar(MOM_CAT_WALK_FORCE);
         }
