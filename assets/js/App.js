@@ -35,6 +35,7 @@ import SkinnedCatObject from "./Object/SkinnedCatObject.js";
 import CatObject from "./Object/CatObject.js";
 import FloorObject from "./Object/FloorObject.js";
 import WallObject from "./Object/WallObject.js";
+import GoalObject from "./Object/GoalObject.js";
 
 
 import ControllerManager from "./Controller/ControllerManager.js";
@@ -505,6 +506,14 @@ export default class App{
       let {scene}=this.three;
       let wallObject=new WallObject();
       scene.add(wallObject);
+    }
+    {
+      let {scene}=this.three;
+      let goalObject=new GoalObject();
+      let center=new THREE.Vector3();
+      GOAL_BOX.getCenter(center);
+      goalObject.position.set(center.x,0,center.z);
+      scene.add(goalObject);
     }
   }
   lockPointer(){
