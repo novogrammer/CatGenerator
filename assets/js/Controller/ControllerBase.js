@@ -117,10 +117,9 @@ export default class ControllerBase extends EventEmitter3{
     
     object3d.traverse((target)=>{
       let {geometry,material}=target;
-      //share geometry
-      //if(!!geometry){
-      //  geometry.dispose();
-      //}
+      if(!!geometry){
+        geometry.dispose();
+      }
       if(!!material){
         let {map}=material;
         if(!!map){

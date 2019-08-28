@@ -112,6 +112,9 @@ export default class MomCatController extends ControllerBase{
           limitedMouseForce.clone().applyMatrix4(mouseMatrix)
         );
         body.applyForce(force,relativePosition);
+        Ammo.destroy(force);
+        Ammo.destroy(relativePosition);
+
         //body.applyForce(new Ammo.btVector3(0,MOM_CAT_WALK_FORCE,0),relativePosition);
 
       }

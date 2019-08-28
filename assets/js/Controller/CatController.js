@@ -59,6 +59,7 @@ export default class CatController extends ControllerBase{
       if(velocity.length()<CAT_MAX_VELOCITY){
         let force=new Ammo.btVector3(0,0,CAT_WALK_FORCE);
         body.applyCentralLocalForce(force);
+        Ammo.destroy(force);
       }
       let transform=body.getCenterOfMassTransform();
       let rotation=convertQuaternionAmmoToThree(transform.getRotation());
@@ -75,10 +76,13 @@ export default class CatController extends ControllerBase{
         let rotationForNow=new THREE.Quaternion().slerp(rotationToTarget,rotationRatio);
         
         let newRotation=rotation.clone().multiply(rotationForNow);
+        let newRotationAmmo=convertQuaternionThreeToAmmo(newRotation);
         let newTransform=new Ammo.btTransform();
-        newTransform.setRotation(convertQuaternionThreeToAmmo(newRotation));
+        newTransform.setRotation(newRotationAmmo);
+        Ammo.destroy(newRotationAmmo);
         newTransform.setOrigin(transform.getOrigin());
         body.setCenterOfMassTransform(newTransform);
+        Ammo.destroy(newTransform);
       }
       
     }
