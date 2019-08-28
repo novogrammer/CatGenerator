@@ -1,3 +1,7 @@
+#MITライセンスとのことなので、改変して使わせていただきました。
+#https://qiita.com/taku-buntu/items/0093a68bfae0b0ff879d
+#https://github.com/taku-buntu/Keras-DCGAN-killmebaby
+
 from keras.layers import Input, Dense, Reshape
 from keras.layers import BatchNormalization, Activation
 from keras.layers.convolutional import UpSampling2D, Conv2D
