@@ -5,6 +5,7 @@ import {
 
 export const FPS=60;
 export const IS_DEBUG=true;
+export const IS_ORBIT_CONTROLS=false;
 export const GRAVITY_CONSTANT=9.8;
 
 export const MAIN_CAMERA_NAME="MainCamera";
@@ -15,6 +16,7 @@ export const GOAL_BOX=new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(-4
 export const CAT_PARAMETERS_QTY=100;
 export const CAT_PARAMETER_VARIATION_RANGE=0.4;
 
+export const CAMERA_POSITION=new THREE.Vector3(0,3,-5);
 
 
 //calculated in CatObject

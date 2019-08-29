@@ -1,6 +1,7 @@
 import {
   FPS,
   IS_DEBUG,
+  IS_ORBIT_CONTROLS,
   GRAVITY_CONSTANT,
   CAT_SCALE,
   CAT_MASS,
@@ -26,6 +27,7 @@ import {
 
 import * as THREE from "./three/build/three.module.js";
 import {OrbitControls} from "./three/examples/jsm/controls/OrbitControls.js";
+import CameraControls from "./CameraControls.js";
 
 //let THREE=Object.assign(Object.assign({},T),{TeapotBufferGeometry});
 
@@ -97,9 +99,14 @@ export default class App{
     camera.position.set(0,10,10);
     camera.name=MAIN_CAMERA_NAME;
     
-    let controls = new OrbitControls( camera, renderer.domElement );
-    controls.target.set(0,1,0);
-    controls.update();
+    let controls=null;
+    if(IS_ORBIT_CONTROLS){
+      controls = new OrbitControls( camera, renderer.domElement );
+      controls.target.set(0,1,0);
+      controls.update();
+    }else{
+      controls=new CameraControls(this);
+    }
     scene.add(camera);
     
     let ambientLight=new THREE.AmbientLight(0x707070);
@@ -190,6 +197,7 @@ export default class App{
     
     let temporaryGrownCat=this.spawn({
       position:object3d.position,
+      rotation:object3d.quaternion,
       scale:MOM_CAT_SCALE,
       mass:MOM_CAT_MASS,
       isTemporary:true,
@@ -585,7 +593,7 @@ export default class App{
   }
   onTick(){
     let {momCatController}=this;
-    let {renderer,scene,camera,mesh,controls}=this.three;
+    let {renderer,scene,camera,controls}=this.three;
     let {physicsWorld,dispatcher,blenderHinge,barSlider,barBody}=this.ammo;
     //console.log(performance.now());
     
@@ -622,7 +630,7 @@ export default class App{
     this.controllerManager.update();
     physicsWorld.stepSimulation( 1/FPS, 10 );
     TWEEN.update();
-    
+    controls.update();
     renderer.render( scene, camera );
     if(IS_DEBUG){
       let text="draw calls: "+renderer.info.render.calls;
