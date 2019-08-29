@@ -621,6 +621,7 @@ export default class App{
     this.controllerManager.updateContact();
     this.controllerManager.update();
     physicsWorld.stepSimulation( 1/FPS, 10 );
+    TWEEN.update();
     
     renderer.render( scene, camera );
     if(IS_DEBUG){
