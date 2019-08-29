@@ -400,11 +400,11 @@ export default class App{
       
     }
     {
-      const WALL_DEPTH=1;
+      const WALL_DEPTH=2;
       let eastWall=this.makeBox({
         position:new THREE.Vector3((ROOM_SIZE.x+WALL_DEPTH)*0.5,ROOM_SIZE.y*0.5,0),
         quaternion:new THREE.Quaternion(),
-        size:new THREE.Vector3(WALL_DEPTH,ROOM_SIZE.y,ROOM_SIZE.z),
+        size:new THREE.Vector3(WALL_DEPTH,ROOM_SIZE.y,ROOM_SIZE.z+WALL_DEPTH*2),
         mass:0,
         material:new THREE.MeshLambertMaterial({
           flatShading:true,
@@ -414,7 +414,7 @@ export default class App{
       let westWall=this.makeBox({
         position:new THREE.Vector3((ROOM_SIZE.x+WALL_DEPTH)*-0.5,ROOM_SIZE.y*0.5,0),
         quaternion:new THREE.Quaternion(),
-        size:new THREE.Vector3(WALL_DEPTH,ROOM_SIZE.y,ROOM_SIZE.z),
+        size:new THREE.Vector3(WALL_DEPTH,ROOM_SIZE.y,ROOM_SIZE.z+WALL_DEPTH*2),
         mass:0,
         material:new THREE.MeshLambertMaterial({
           flatShading:true,
@@ -424,7 +424,7 @@ export default class App{
       let southWall=this.makeBox({
         position:new THREE.Vector3(0,ROOM_SIZE.y*0.5,(ROOM_SIZE.z+WALL_DEPTH)*0.5),
         quaternion:new THREE.Quaternion(),
-        size:new THREE.Vector3(ROOM_SIZE.x,ROOM_SIZE.y,WALL_DEPTH),
+        size:new THREE.Vector3(ROOM_SIZE.x+WALL_DEPTH*2,ROOM_SIZE.y,WALL_DEPTH),
         mass:0,
         material:new THREE.MeshLambertMaterial({
           flatShading:true,
@@ -434,7 +434,7 @@ export default class App{
       let northWall=this.makeBox({
         position:new THREE.Vector3(0,ROOM_SIZE.y*0.5,(ROOM_SIZE.z+WALL_DEPTH)*-0.5),
         quaternion:new THREE.Quaternion(),
-        size:new THREE.Vector3(ROOM_SIZE.x,ROOM_SIZE.y,WALL_DEPTH),
+        size:new THREE.Vector3(ROOM_SIZE.x+WALL_DEPTH*2,ROOM_SIZE.y,WALL_DEPTH),
         mass:0,
         material:new THREE.MeshLambertMaterial({
           flatShading:true,
