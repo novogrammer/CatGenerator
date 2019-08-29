@@ -33,6 +33,7 @@ export default class CameraControls{
       let {object3d}=momCatController;
       target.copy(object3d.localToWorld(new THREE.Vector3(0,0,0)));
       positionToMove.copy(object3d.localToWorld(CAMERA_POSITION.clone()));
+      positionToMove.y=Math.max(positionToMove.y,CAMERA_POSITION.y);
     }
     position.lerp(positionToMove,0.1);
     camera.position.copy(position);
