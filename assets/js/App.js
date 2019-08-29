@@ -550,24 +550,7 @@ export default class App{
   }
   onKeydown(e){
     if(e.key==" "){
-      /*
-      for(let ix=0;ix<5;++ix){
-        let x=ix*-0.3+1
-        for(let iy=0;iy<5;++iy){
-          let y=iy*0.5+0.2;
-          this.spawn({position:new THREE.Vector3(x,y,0)});
-        }
-      }
-      */
-      let {momCatController}=this;
-      if(momCatController){
-        this.spawnFromMom();
-      }else{
-        let catController=this.spawn({position:new THREE.Vector3(0,1,0)});
-      }
-      //let momCatController=this.grow({cat:catController});
-      
-
+      this.setNextGameState(new GameStateStart(this));
     }
     if(e.key.toUpperCase()=="M"){
       //TODO
