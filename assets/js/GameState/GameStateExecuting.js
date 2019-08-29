@@ -55,7 +55,10 @@ export default class GameStateExecuting extends GameStateBase{
           context.setNextGameState(new GameStateGameover(context));
           return;
         }else{
-          context.spawnFromMom();
+          let catController=context.spawnFromMom();
+          let $cat=$("<div></div>").addClass("cat");
+          $("#Cats").append($cat);
+          context.displayCatIcon($cat,catController.catParameters);
         }
       }
     }

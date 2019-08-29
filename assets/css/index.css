@@ -8,6 +8,37 @@ body{
   left:0;
   top:0;
 }
+#Cats{
+  position:fixed;
+  left:0;
+  top:0;
+  width:100vw;
+  height:auto;
+  display:flex;
+  flex-wrap:wrap;
+  flex-direction:row;
+  justify-content:start;
+}
+#Cats .cat{
+  position:relative;
+  width:4vw;
+  height:4vw;
+  background-position:center center;
+  background-size:contain;
+}
+
+#MomCat{
+  position:fixed;
+  right:0;
+  bottom:0;
+  width:10vw;
+  height:10vw;
+  background-position:center center;
+  background-size:contain;
+}
+
+
+
 #LockPointer,#Fullscreen{
   position:fixed;
   left:20px;
@@ -70,5 +101,7 @@ body{
   font-size:5vw;
   font-family: monospace;
 }
+
+
 
 

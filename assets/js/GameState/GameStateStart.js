@@ -20,6 +20,10 @@ export default class GameStateStart extends GameStateBase{
     let {context}=this;
     let catController=context.spawn({position:new THREE.Vector3(0,1,0)});
     let momCatController=context.grow({cat:catController});
+    
+    context.displayCatIcon($("#MomCat"),catController.catParameters);
+    $("#Cats").empty();
+    
     setTimeout(()=>{
       context.setNextGameState(new GameStateExecuting(context));
     },1000);
