@@ -14,7 +14,12 @@ export default class GameStateGoal extends GameStateBase{
     }
     super.onBegin();
     let {context}=this;
-    context.setNextGameState(new GameStateStart(context));
+    $("#Goal").show();
+    setTimeout(()=>{
+      $("#Goal").fadeOut(1000,()=>{
+        context.setNextGameState(new GameStateStart(context));
+      });
+    },1000*3);
   }
   onEnd(){
     if(IS_DEBUG){

@@ -14,7 +14,14 @@ export default class GameStateGameover extends GameStateBase{
     }
     super.onBegin();
     let {context}=this;
-    context.setNextGameState(new GameStateStart(context));
+    $("#Gameover").fadeIn(1000);
+    setTimeout(()=>{
+      $("#Gameover").fadeOut(1000,()=>{
+        context.setNextGameState(new GameStateStart(context));
+      });
+    },1000*3);
+
+
   }
   onEnd(){
     if(IS_DEBUG){

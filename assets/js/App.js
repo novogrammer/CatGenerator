@@ -58,6 +58,9 @@ import GameStateGameover from "./GameState/GameStateGameover.js"
 export default class App{
   constructor(){
     this.$View=$("#View");
+    if(!IS_DEBUG){
+      $("#DebugText").hide();
+    }
     this.isPointerLocked=false;
     this.isFullscreen=false;
     this.three=null;
