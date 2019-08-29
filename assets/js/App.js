@@ -47,10 +47,16 @@ import EmptyController from "./Controller/EmptyController.js";
 import GoalController from "./Controller/GoalController.js";
 
 
+import GameStateStart from "./GameState/GameStateStart.js"
+/*
+import GameStateExecuting from "./GameState/GameStateExecuting.js"
+import GameStateGoal from "./GameState/GameStateGoal.js"
+import GameStateGameover from "./GameState/GameStateGameover.js"
+*/
+
+
 export default class App{
   constructor(){
-    this.mousePosition={x:0,y:0};
-    this.mouseDeltaPosition={x:0,y:0};
     this.$View=$("#View");
     this.isPointerLocked=false;
     this.isFullscreen=false;
@@ -66,6 +72,9 @@ export default class App{
     this.setupScene();
     this.setupStats();
     this.setupEvents();
+    
+    this.gameState=null;
+    this.setNextGameState(new GameStateStart(this));
     
     //this.spawn({});
     /*
@@ -551,20 +560,16 @@ export default class App{
     }
     if(e.key.toUpperCase()=="M"){
       //TODO
-      let catController=this.spawn({position:new THREE.Vector3(0,1,0)});
-      let momCatController=this.grow({cat:catController});
+      
       
     }
   }
   onMousemove(e){
     let {originalEvent}=e;
-    let {movementX,movementY}=originalEvent;
     //console.log(movementX,movementY);
-    if(!!this.momCatController){
-      this.momCatController.onMousemove(originalEvent);
+    if(!!this.gameState){
+      this.gameState.onMousemove(originalEvent);
     }
-    this.mouseDeltaPosition.x+=movementX;
-    this.mouseDeltaPosition.y+=movementY;
 
   }
   onPointerlockchange(e){
@@ -580,8 +585,6 @@ export default class App{
     let {renderer,scene,camera,mesh,controls}=this.three;
     let {physicsWorld,dispatcher,blenderHinge,barSlider,barBody}=this.ammo;
     //console.log(performance.now());
-    this.mousePosition.x+=this.mouseDeltaPosition.x;
-    this.mousePosition.y+=this.mouseDeltaPosition.y;
     
     //blenderHinge.enableAngularMotor(true,1.5*1,50);
     //blenderHinge.enableAngularMotor(true,degToRad(this.mouseDeltaPosition.x*FPS),50);
@@ -607,8 +610,8 @@ export default class App{
     }
     */
     
-    if(!!momCatController && momCatController.needsSpawn){
-      this.spawnFromMom();
+    if(!!this.gameState){
+      this.gameState.onUpdate();
     }
     
     
@@ -623,8 +626,6 @@ export default class App{
       $("#DebugText").text(text);
     }
     renderer.info.reset();
-    this.mouseDeltaPosition.x=0;
-    this.mouseDeltaPosition.y=0;
   }
   makeNoise(){
     let noise=[];
@@ -652,6 +653,15 @@ export default class App{
     },"");
     return hexString;
     
+  }
+  setNextGameState(nextGameState){
+    if(!!this.gameState){
+      this.gameState.onEnd();
+    }
+    this.gameState=nextGameState;
+    if(!!this.gameState){
+      this.gameState.onBegin();
+    }
   }
   static load(){
     let promises=[];

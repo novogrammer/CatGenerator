@@ -54,6 +54,8 @@ export default class WallObject extends THREE.Object3D{
       geometry.translate(0,wallParams.height*0.5,wallParams.depth);
       geometry.rotateY(wallParams.rotation);
       let mesh=new THREE.Mesh(geometry,material);
+      //mesh.castShadow=true;
+      mesh.receiveShadow=true;
       
       this.add(mesh);
     }
