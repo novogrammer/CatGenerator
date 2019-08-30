@@ -98,7 +98,7 @@ export default class App{
     }
     scene.add(camera);
     
-    let ambientLight=new THREE.AmbientLight(0x707070);
+    let ambientLight=new THREE.AmbientLight(0x909090);
     scene.add(ambientLight);
     let directionalLight=new THREE.DirectionalLight(0xffffff,1);
     directionalLight.position.set(10,10,10);
@@ -115,6 +115,7 @@ export default class App{
       camera.far=30;
       mapSize.x=512;
       mapSize.y=512;
+      shadow.bias=-0.001;
     }
     scene.add(directionalLight);
     
