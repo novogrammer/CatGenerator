@@ -1,5 +1,7 @@
 import {
   IS_DEBUG,
+  START_POSITION,
+  START_ROTATION,
 } from "../constants.js";
 import {
   degToRad,
@@ -22,10 +24,9 @@ export default class GameStateStart extends GameStateBase{
     $("#Start").show();
     
     let {context}=this;
-    let rotate180=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),degToRad(180));
     let catController=context.spawn({
-      position:new THREE.Vector3(0,1,0),
-      rotation:rotate180,
+      position:START_POSITION,
+      rotation:START_ROTATION,
     });
     catController.update();//apply transform
     let momCatController=context.grow({cat:catController});

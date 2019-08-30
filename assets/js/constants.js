@@ -10,9 +10,12 @@ export const GRAVITY_CONSTANT=9.8;
 
 export const MAIN_CAMERA_NAME="MainCamera";
 
-export const ROOM_SIZE=new THREE.Vector3(10,2,10);
+export const ROOM_SIZE=new THREE.Vector3(30,4,30);
 export const GOAL_BOX_SIZE=new THREE.Vector3(2,1,2);
-export const GOAL_BOX_POSITION=new THREE.Vector3(-4,GOAL_BOX_SIZE.y*-0.5,-4);
+export const GOAL_BOX_POSITION=new THREE.Vector3(-9,GOAL_BOX_SIZE.y*-0.5,-9);
+
+export const START_POSITION=new THREE.Vector3(7,0,7);
+export const START_ROTATION=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),degToRad(180+45));
 
 export const CAT_PARAMETERS_QTY=100;
 export const CAT_PARAMETER_VARIATION_RANGE=0.4;
