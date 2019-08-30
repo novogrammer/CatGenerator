@@ -9,7 +9,8 @@ import {
   MOM_CAT_MASS,
   MAIN_CAMERA_NAME,
   ROOM_SIZE,
-  GOAL_BOX,
+  GOAL_BOX_SIZE,
+  GOAL_BOX_POSITION,
   CAT_PARAMETERS_QTY,
   CAT_PARAMETER_VARIATION_RANGE,
 } from "./constants.js";
@@ -436,14 +437,10 @@ export default class App{
       });
     }
     {
-      let center=new THREE.Vector3();
-      let size=new THREE.Vector3();
-      GOAL_BOX.getCenter(center);
-      GOAL_BOX.getSize(size);
       let goal=this.makeBox({
-        position:center,
+        position:GOAL_BOX_POSITION,
         quaternion:new THREE.Quaternion(),
-        size:size,
+        size:GOAL_BOX_SIZE,
         mass:0,
         material:new THREE.MeshLambertMaterial({
           color:0xff0000,
@@ -486,8 +483,7 @@ export default class App{
       let {scene}=this.three;
       let goalObject=new GoalObject();
       let center=new THREE.Vector3();
-      GOAL_BOX.getCenter(center);
-      goalObject.position.set(center.x,0,center.z);
+      goalObject.position.set(GOAL_BOX_POSITION.x,0,GOAL_BOX_POSITION.z);
       scene.add(goalObject);
     }
   }

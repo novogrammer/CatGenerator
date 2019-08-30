@@ -11,7 +11,8 @@ export const GRAVITY_CONSTANT=9.8;
 export const MAIN_CAMERA_NAME="MainCamera";
 
 export const ROOM_SIZE=new THREE.Vector3(10,2,10);
-export const GOAL_BOX=new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(-4,-0.5,-4),new THREE.Vector3(2,1,2));
+export const GOAL_BOX_SIZE=new THREE.Vector3(2,1,2);
+export const GOAL_BOX_POSITION=new THREE.Vector3(-4,GOAL_BOX_SIZE.y*-0.5,-4);
 
 export const CAT_PARAMETERS_QTY=100;
 export const CAT_PARAMETER_VARIATION_RANGE=0.4;
