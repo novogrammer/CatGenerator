@@ -426,8 +426,8 @@ export default class App{
   }
   generateMaze(){
     this.cleanMetalBoxes();
+    //棒倒し法の簡易版。多分大丈夫。
     for(let iz=0;iz<MAZE_PILLAR_QTY;++iz){
-      
       let bz=((MAZE_PILLAR_QTY-1)*-0.5*MAZE_WALL_QTY-1+iz*(MAZE_WALL_QTY+1));
       for(let ix=0;ix<MAZE_PILLAR_QTY;++ix){
         let bx=((MAZE_PILLAR_QTY-1)*-0.5*MAZE_WALL_QTY-1+ix*(MAZE_WALL_QTY+1));
@@ -439,12 +439,6 @@ export default class App{
         }
       }
     }
-    
-    for(let i=0;i<10;++i){
-      //this.makeMetalBox(new THREE.Vector3(random(-4,4),BOX_SIZE.y*0.5,random(-4,4)));
-      
-    }
-    
   }
   setupScene(){
     let {controllerManager}=this;
