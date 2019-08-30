@@ -165,6 +165,7 @@ export default class App{
     
     $(window).on("keydown.app",this.onKeydown.bind(this));
     this.$View.on("mousemove.app",this.onMousemove.bind(this));
+    this.$View.on("mousedown.app",this.onMousedown.bind(this));
     $(document).on("pointerlockchange.app",this.onPointerlockchange.bind(this));
     $(document).on("fullscreenchange.app",this.onFullscreenchange.bind(this));
     
@@ -511,6 +512,14 @@ export default class App{
       this.gameState.onMousemove(originalEvent);
     }
 
+  }
+  onMousedown(e){
+    let {originalEvent}=e;
+    const LEFT_BIT=1<<0;
+    const RIGHT_BIT=1<<1;
+    if(originalEvent.buttons==LEFT_BIT+RIGHT_BIT){
+      this.setNextGameState(new GameStateStart(this));
+    }
   }
   onPointerlockchange(e){
     this.isPointerLocked=!!document.pointerLockElement;
