@@ -17,7 +17,7 @@ export default class GoalObject extends THREE.Object3D{
   }
   setupObject(){
     const POLE_DIAMETER=0.1;
-    const POLE_HEIGHT=2;
+    const POLE_HEIGHT=3;
     const FLAG_WIDTH=1;
     const FLAG_HEIGHT=1;
     const FLAG_DEPTH=0.05;

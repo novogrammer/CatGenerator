@@ -9,6 +9,7 @@ import {
   MOM_CAT_MASS,
   MAIN_CAMERA_NAME,
   ROOM_SIZE,
+  BOX_SIZE,
   GOAL_BOX_SIZE,
   GOAL_BOX_POSITION,
   CAT_PARAMETERS_QTY,
@@ -49,6 +50,7 @@ import CatController from "./Controller/CatController.js";
 import CatSensorController from "./Controller/CatSensorController.js";
 import EmptyController from "./Controller/EmptyController.js";
 import GoalController from "./Controller/GoalController.js";
+import MetalBoxController from "./Controller/MetalBoxController.js";
 
 
 import GameStateStart from "./GameState/GameStateStart.js"
@@ -68,6 +70,7 @@ export default class App{
     this.controllerManager=null;
     this.catControllers=[];//except MomCat
     this.momCatController=null;
+    this.metalBoxControllers=[];
     
     this.setupThree();
     this.setupAmmo();
@@ -121,7 +124,30 @@ export default class App{
     }
     scene.add(directionalLight);
     
-    this.three={renderer,scene,camera,controls};
+    let metalMaterial=null;
+    {
+      const PATH_BASE="./assets/img/metal_plate_1k_jpg/";
+      let textureLoader=new THREE.TextureLoader();
+      let load=(filename)=>{
+        let texture=textureLoader.load(PATH_BASE+filename);
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        return texture;
+      };
+      metalMaterial=new THREE.MeshStandardMaterial({
+        map:load("metal_plate_diff_1k.jpg"),
+        normalMap:load("metal_plate_Nor_1k.jpg"),
+        aoMap:load("metal_plate_AO_1k.jpg"),
+        roughnessMap:load("metal_plate_rough_1k.jpg"),
+        metalnessMap:load("metal_plate_spec_1k.jpg"),
+        displacementScale:0.01,
+        displacementBias:-0.01,
+      });
+      
+    }
+
+    
+    this.three={renderer,scene,camera,controls,metalMaterial};
 
   }
   setupAmmo(){
@@ -331,6 +357,13 @@ export default class App{
       this.momCatController=null;
     }
   }
+  cleanMetalBoxes(){
+    for(let metalBoxController of this.metalBoxControllers){
+      this.controllerManager.unregister(metalBoxController);
+      metalBoxController.destroy();
+    }
+    this.metalBoxControllers=[];
+  }
   makeBox({
     position=new THREE.Vector3(),
     quaternion=new THREE.Quaternion(),
@@ -375,6 +408,18 @@ export default class App{
       this.controllerManager.register(controller);
     }
     return controller;
+    
+  }
+  makeMetalBox(position=new THREE.Vector3(0,0,0)){
+    let {metalMaterial}=this.three;
+    let box=this.makeBox({
+      position:position,
+      size:BOX_SIZE,
+      mass:0,
+      material:metalMaterial,
+      ControllerClass:MetalBoxController,
+    });
+    this.metalBoxControllers.push(box);
     
   }
   setupScene(){
