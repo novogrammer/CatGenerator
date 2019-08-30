@@ -17,7 +17,8 @@ export const GOAL_BOX_POSITION=new THREE.Vector3(-4,GOAL_BOX_SIZE.y*-0.5,-4);
 export const CAT_PARAMETERS_QTY=100;
 export const CAT_PARAMETER_VARIATION_RANGE=0.4;
 
-export const CAMERA_POSITION=new THREE.Vector3(0,3,-5);
+export const CAMERA_LOOKAT=new THREE.Vector3(0,1,0);
+export const CAMERA_POSITION=new THREE.Vector3(0,1,-5);
 
 
 //calculated in CatObject

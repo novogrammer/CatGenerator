@@ -1,6 +1,7 @@
 import {
   IS_DEBUG,
   CAMERA_POSITION,
+  CAMERA_LOOKAT,
 } from "./constants.js";
 
 
@@ -16,10 +17,10 @@ export default class CameraControls{
   }
   reset(){
     let {context,target,position,positionToMove}=this;
-    target.set(0,0,0);
     let {momCatController}=context;
     if(!!momCatController){
       let {object3d}=momCatController;
+      target.copy(object3d.localToWorld(CAMERA_LOOKAT.clone()));
       position.copy(object3d.localToWorld(CAMERA_POSITION.clone()));
       positionToMove.copy(object3d.localToWorld(CAMERA_POSITION.clone()));
     }
@@ -31,7 +32,7 @@ export default class CameraControls{
     let {momCatController}=context;
     if(!!momCatController){
       let {object3d}=momCatController;
-      target.copy(object3d.localToWorld(new THREE.Vector3(0,0,0)));
+      target.copy(object3d.localToWorld(CAMERA_LOOKAT.clone()));
       positionToMove.copy(object3d.localToWorld(CAMERA_POSITION.clone()));
       positionToMove.y=Math.max(positionToMove.y,CAMERA_POSITION.y);
     }
