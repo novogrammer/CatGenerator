@@ -103,20 +103,20 @@ export default class App{
     let ambientLight=new THREE.AmbientLight(0x909090);
     scene.add(ambientLight);
     let directionalLight=new THREE.DirectionalLight(0xffffff,1);
-    directionalLight.position.set(10,10,10);
+    directionalLight.position.set(-5,10,5);
     directionalLight.castShadow=true;
     {
       let {shadow}=directionalLight;
       let {camera,mapSize}=shadow;
-      const d=5;
+      const d=ROOM_SIZE.x*0.75;
       camera.left=-d;
       camera.right=d;
       camera.top=d;
       camera.bottom=-d;
       camera.near=2;
       camera.far=30;
-      mapSize.x=512;
-      mapSize.y=512;
+      mapSize.x=256*4;
+      mapSize.y=256*4;
       shadow.bias=-0.001;
     }
     scene.add(directionalLight);
