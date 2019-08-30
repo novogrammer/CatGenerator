@@ -13,6 +13,9 @@ export function random(min=null,max=null){
   }
   return Math.random()*(max-min)+min;
 }
+export function clamp(value,min,max){
+  return Math.min(Math.max(value,min),max);
+}
 export function map(inputValue,inputMin,inputMax,outputMin,outputMax,clamp=false){
   let outputValue=((inputValue-inputMin)/(inputMax-inputMin)*(outputMax-outputMin)+outputMin);
   if(clamp){

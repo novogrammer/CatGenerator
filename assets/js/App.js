@@ -17,6 +17,7 @@ import {
 
 import {
   degToRad,
+  clamp,
 } from "./math_utils.js";
 import {
   convertVector3AmmoToThree,
@@ -555,13 +556,13 @@ export default class App{
   makeVariation(parameters){
     let newParameters=parameters.map((n)=>{
       let variation=(Math.random()-0.5)*CAT_PARAMETER_VARIATION_RANGE*2;
-      return Math.max(Math.min(n+variation,1),0);
+      return clamp(n+variation,0,1);
     })
     return newParameters;
   }
   toHexString(valueArray){
     let hexString=valueArray.reduce((hexString,n)=>{
-      let eightBits=Math.min(Math.max(Math.floor(n*256),0),255);
+      let eightBits=clamp(n*256,0,255);
       hexString+=((eightBits&0xf0)>>4).toString(16);
       hexString+=(eightBits&0x0f).toString(16);
       return hexString;
