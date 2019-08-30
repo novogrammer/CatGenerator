@@ -50,11 +50,6 @@ import GoalController from "./Controller/GoalController.js";
 
 
 import GameStateStart from "./GameState/GameStateStart.js"
-/*
-import GameStateExecuting from "./GameState/GameStateExecuting.js"
-import GameStateGoal from "./GameState/GameStateGoal.js"
-import GameStateGameover from "./GameState/GameStateGameover.js"
-*/
 
 
 export default class App{
@@ -81,12 +76,6 @@ export default class App{
     this.gameState=null;
     this.setNextGameState(new GameStateStart(this));
     
-    //this.spawn({});
-    /*
-    setInterval(()=>{
-      this.spawn();
-    },1000);
-    */
   }
   setupThree(){
     let renderer=new THREE.WebGLRenderer({
@@ -129,12 +118,7 @@ export default class App{
     }
     scene.add(directionalLight);
     
-
-    
     this.three={renderer,scene,camera,controls};
-
-    //camera.position.set(0,2,5);
-    //camera.lookAt(new THREE.Vector3(0,2,0));
 
   }
   setupAmmo(){
@@ -487,36 +471,6 @@ export default class App{
 
       this.ammo.blenderHinge=blenderHinge;
     }
-    if(false){
-      let bar=this.makeBox({
-        position:new THREE.Vector3(0,2,0),
-        quaternion:new THREE.Quaternion(),
-        size:new THREE.Vector3(0.5,4,0.5),
-        mass:100,
-        material:new THREE.MeshLambertMaterial({
-          color:0x00ff00,
-          flatShading:true,
-        }),
-      });
-      bar.body.setActivationState(4);//DISABLE_DEACTIVATION
-      this.ammo.barBody=bar.body;
-      /*
-      var frameInA=new Ammo.btTransform();
-      let directionX=new Ammo.btQuaternion();
-      directionX.setRotation(new Ammo.btVector3(0,0,1),degToRad(0));
-      frameInA.setRotation(directionX);
-      frameInA.setOrigin(new Ammo.btVector3(0,1,0));
-      var frameInB=new Ammo.btTransform();
-      frameInB.setRotation(directionX);
-      frameInB.setOrigin(new Ammo.btVector3(0,-2,0));
-      
-      let barSlider=new Ammo.btSliderConstraint(ground.body,bar.body,frameInA,frameInB,true);
-      physicsWorld.addConstraint( barSlider, true );
-      barSlider.setLowerLinLimit(-1);
-      barSlider.setUpperLinLimit(1);
-      this.ammo.barSlider=barSlider;
-      */
-    }
     {
       let {scene}=this.three;
       let floorObject=new FloorObject();
@@ -552,15 +506,9 @@ export default class App{
     if(e.key==" "){
       this.setNextGameState(new GameStateStart(this));
     }
-    if(e.key.toUpperCase()=="M"){
-      //TODO
-      
-      
-    }
   }
   onMousemove(e){
     let {originalEvent}=e;
-    //console.log(movementX,movementY);
     if(!!this.gameState){
       this.gameState.onMousemove(originalEvent);
     }

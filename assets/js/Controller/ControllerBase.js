@@ -60,7 +60,6 @@ export default class ControllerBase extends EventEmitter3{
     for(let other of leaveSet.values()){
       this.emit("leave",other);
     }
-//    leaveSet.values().forEach(this.emit.bind(this,"leave"));
   }
   update(){
     let {body,object3d,transform}=this;

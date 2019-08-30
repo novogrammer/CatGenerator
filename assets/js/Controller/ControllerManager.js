@@ -53,19 +53,5 @@ export default class ControllerManager{
     for(let controller of this.controllers){
       controller.update();
     }
-    
-    //TODO
-    /*
-    let newControllers=[];
-    for(let controller of this.controllers){
-      if(-2<controller.object3d.position.y){
-        newControllers.push(controller);
-      }else{
-        controller.destroy();
-        console.log("DESTROY!");
-      }
-    }
-    this.controllers=newControllers;
-    */
   }
 }
