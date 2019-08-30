@@ -526,31 +526,6 @@ export default class App{
     let {momCatController}=this;
     let {renderer,scene,camera,controls}=this.three;
     let {physicsWorld,dispatcher,blenderHinge,barSlider,barBody}=this.ammo;
-    //console.log(performance.now());
-    
-    //blenderHinge.enableAngularMotor(true,1.5*1,50);
-    //blenderHinge.enableAngularMotor(true,degToRad(this.mouseDeltaPosition.x*FPS),50);
-    /*
-    if(Math.floor(performance.now()/4000)%2==0){
-      barBody.setLinearVelocity(new Ammo.btVector3(1,0,0));
-    }else{
-      barBody.setLinearVelocity(new Ammo.btVector3(-1,0,0));
-    }
-    */
-    /*
-    let deg=performance.now()/1000*360/4;
-    if(Math.floor(deg/360)%2==0){
-      deg=0;
-    }
-    {
-      let x=Math.cos(degToRad(deg))*2;
-      let transform=new Ammo.btTransform();
-      transform.setIdentity();
-      transform.setOrigin(new Ammo.btVector3(x,2,0));
-      barBody.setCenterOfMassTransform(transform);
-      
-    }
-    */
     
     if(!!this.gameState){
       this.gameState.onUpdate();
