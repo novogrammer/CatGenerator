@@ -14,6 +14,8 @@ import {
   GOAL_BOX_POSITION,
   CAT_PARAMETERS_QTY,
   CAT_PARAMETER_VARIATION_RANGE,
+  MAZE_PILLAR_QTY,
+  MAZE_WALL_QTY,
 } from "./constants.js";
 
 import {
@@ -420,6 +422,28 @@ export default class App{
       ControllerClass:MetalBoxController,
     });
     this.metalBoxControllers.push(box);
+    
+  }
+  generateMaze(){
+    this.cleanMetalBoxes();
+    for(let iz=0;iz<MAZE_PILLAR_QTY;++iz){
+      
+      let bz=((MAZE_PILLAR_QTY-1)*-0.5*MAZE_WALL_QTY-1+iz*(MAZE_WALL_QTY+1));
+      for(let ix=0;ix<MAZE_PILLAR_QTY;++ix){
+        let bx=((MAZE_PILLAR_QTY-1)*-0.5*MAZE_WALL_QTY-1+ix*(MAZE_WALL_QTY+1));
+        let pillarPosition=new THREE.Vector3(bx*BOX_SIZE.x,BOX_SIZE.y*0.5,bz*BOX_SIZE.z);
+        let deg=90*Math.floor(Math.random()*4);
+        let wallVector=new THREE.Vector3(1,0,0).applyAxisAngle(new THREE.Vector3(0,1,0),degToRad(deg)).multiply(BOX_SIZE);
+        for(let iw=0;iw<=MAZE_WALL_QTY;++iw){
+          this.makeMetalBox(pillarPosition.clone().add(wallVector.clone().multiplyScalar(iw)));
+        }
+      }
+    }
+    
+    for(let i=0;i<10;++i){
+      //this.makeMetalBox(new THREE.Vector3(random(-4,4),BOX_SIZE.y*0.5,random(-4,4)));
+      
+    }
     
   }
   setupScene(){

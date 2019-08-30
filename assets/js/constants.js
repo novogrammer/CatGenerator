@@ -4,19 +4,29 @@ import {
 } from "./math_utils.js";
 
 export const FPS=60;
-export const IS_DEBUG=true;
+export const IS_DEBUG=false;
 export const IS_ORBIT_CONTROLS=false;
 export const GRAVITY_CONSTANT=9.8;
 
 export const MAIN_CAMERA_NAME="MainCamera";
 
-export const ROOM_SIZE=new THREE.Vector3(30,4,30);
-export const GOAL_BOX_SIZE=new THREE.Vector3(2,1,2);
-export const GOAL_BOX_POSITION=new THREE.Vector3(-9,GOAL_BOX_SIZE.y*-0.5,-9);
-
 export const BOX_SIZE=new THREE.Vector3(2,2,2);
 
-export const START_POSITION=new THREE.Vector3(7,0,7);
+//棒倒し法
+//https://yaneurao.hatenadiary.com/entry/20130125/p1
+//柱は2とすると
+//柱の間の壁の数は4
+//柱も壁もMetalBoxなのでMetalBoxの数は(4+1)*2+4*1=14
+export const MAZE_PILLAR_QTY=3;
+export const MAZE_WALL_QTY=3;
+export const MAZE_BOX_QTY=(MAZE_WALL_QTY+1)*MAZE_PILLAR_QTY+MAZE_WALL_QTY*1;
+
+export const ROOM_SIZE=new THREE.Vector3(BOX_SIZE.x*MAZE_BOX_QTY,4,BOX_SIZE.z*MAZE_BOX_QTY);
+export const GOAL_BOX_SIZE=new THREE.Vector3(2,1,2);
+export const GOAL_BOX_POSITION=new THREE.Vector3((ROOM_SIZE.x*0.5-BOX_SIZE.x*MAZE_WALL_QTY*0.5)*-1,GOAL_BOX_SIZE.y*-0.5,(ROOM_SIZE.z*0.5-BOX_SIZE.z*MAZE_WALL_QTY*0.5)*-1);
+
+
+export const START_POSITION=GOAL_BOX_POSITION.clone().multiplyScalar(-1);
 export const START_ROTATION=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),degToRad(180+45));
 
 export const CAT_PARAMETERS_QTY=100;
@@ -38,7 +48,7 @@ export const CAT_MAX_ANGLULAR_VELOCITY=degToRad(90);
 export const CAT_SCALE=1;
 export const CAT_MASS=1;
 
-export const CAT_SPAWN_RATE=1;
+export const CAT_SPAWN_RATE=2;
 export const CAT_MAX_QTY=100;
 
 export const MOM_CAT_MASS=8;

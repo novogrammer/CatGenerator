@@ -6,7 +6,6 @@ import {
 } from "../constants.js";
 import {
   degToRad,
-  random,
 } from "../math_utils.js";
 
 
@@ -27,11 +26,7 @@ export default class GameStateStart extends GameStateBase{
     
     let {context}=this;
     
-    context.cleanMetalBoxes();
-    for(let i=0;i<10;++i){
-      context.makeMetalBox(new THREE.Vector3(random(-4,4),BOX_SIZE.y*0.5,random(-4,4)));
-      
-    }
+    context.generateMaze();
     
     let catController=context.spawn({
       position:START_POSITION,
