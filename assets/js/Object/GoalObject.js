@@ -20,7 +20,7 @@ export default class GoalObject extends THREE.Object3D{
     const POLE_HEIGHT=2;
     const FLAG_WIDTH=1;
     const FLAG_HEIGHT=1;
-    const FLAG_DEPTH=0.01;
+    const FLAG_DEPTH=0.05;
     {
       let material=new THREE.MeshLambertMaterial({
         color:0xff0000,
