@@ -22,7 +22,9 @@ export const CAMERA_POSITION=new THREE.Vector3(0,1,-5);
 
 
 //calculated in CatObject
-export const CAT_OBJECT_AABB=new THREE.Box3(new THREE.Vector3(-0.15,-0.275,-0.35),new THREE.Vector3(0.15,0.35,0.45));
+//export const CAT_OBJECT_AABB=new THREE.Box3(new THREE.Vector3(-0.15,-0.275,-0.35),new THREE.Vector3(0.15,0.35,0.45));
+//trim max.y
+export const CAT_OBJECT_AABB=new THREE.Box3(new THREE.Vector3(-0.15,-0.275,-0.35),new THREE.Vector3(0.15,0.1,0.45));
 
 
 export const CAT_MAX_VELOCITY=1;
