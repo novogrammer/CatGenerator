@@ -1,7 +1,5 @@
 CatGenerator
 =====================
-
-# CatGenerator
 HOMEWORKS2019で展示した「こねこたくさん」のプログラムです。
 
 主な使用ライブラリは以下の通りです。
@@ -21,19 +19,19 @@ HOMEWORKS2019で展示した「こねこたくさん」のプログラムです�
 
 https://github.com/taku-buntu/Keras-DCGAN-killmebaby
 
-## 前提
+# 前提
 * MacかLinux（WindowsもOK？）
 * python3
 * Google Chrome
 
-## 導入
+# 導入
 ```
 $ python3 -m venv venv
 $ source venv/bin/activate
 $ pip3 install -r requirements.txt
 $ deactivate
 ```
-## 実行
+# 実行
 ```
 $ source venv/bin/activate
 $ python3 ./main.py
