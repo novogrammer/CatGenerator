@@ -496,26 +496,6 @@ export default class App{
         ControllerClass:GoalController,
       });
     }
-    if(false){
-      let blender=this.makeBox({
-        position:new THREE.Vector3(0,0.5,0),
-        quaternion:new THREE.Quaternion(),
-        size:new THREE.Vector3(10,1,1),
-        mass:1,
-        material:new THREE.MeshLambertMaterial({
-          color:0xff0000,
-          flatShading:true,
-        }),
-      });
-      var localPivotA=new Ammo.btVector3(0,1,0);
-      var localPivotB=new Ammo.btVector3(0,-0.5,0);
-      var axis=new Ammo.btVector3(0,1,0);    
-      
-      let blenderHinge=new Ammo.btHingeConstraint(ground.body,blender.body,localPivotA,localPivotB,axis,axis,true);
-      physicsWorld.addConstraint( blenderHinge, true );
-
-      this.ammo.blenderHinge=blenderHinge;
-    }
     {
       let {scene}=this.three;
       let floorObject=new FloorObject();
@@ -577,7 +557,7 @@ export default class App{
   onTick(){
     let {momCatController}=this;
     let {renderer,scene,camera,controls}=this.three;
-    let {physicsWorld,dispatcher,blenderHinge,barSlider,barBody}=this.ammo;
+    let {physicsWorld,dispatcher}=this.ammo;
     
     if(!!this.gameState){
       this.gameState.onUpdate();
