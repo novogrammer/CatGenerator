@@ -1,7 +1,7 @@
 CatGenerator
 =====================
 
-#CatGenerator
+# CatGenerator
 HOMEWORKS2019で展示した「こねこたくさん」のプログラムです。
 
 主な使用ライブラリは以下の通りです。
@@ -18,21 +18,22 @@ HOMEWORKS2019で展示した「こねこたくさん」のプログラムです�
 クライアント側はthree.jsとAmmo.jsのアプリです。Ammo.jsはthree.jsにマージされているバージョンのwasmを使用しました。
 
 後述しますが、DCGAN周りは以下のプログラムをほぼそのまま使いました。
+
 https://github.com/taku-buntu/Keras-DCGAN-killmebaby
 
-##前提
+## 前提
 * MacかLinux（WindowsもOK？）
 * python3
 * Google Chrome
 
-##導入
+## 導入
 ```
 $ python3 -m venv venv
 $ source venv/bin/activate
 $ pip3 install -r requirements.txt
 $ deactivate
 ```
-##実行
+## 実行
 ```
 $ source venv/bin/activate
 $ python3 ./main.py
@@ -46,7 +47,7 @@ $ python3 ./main.py
 ゴールにたどり着くと次の世代へ交代となり、100頭生まれるとゲームオーバーです
 
 
-#GANまわり
+# GANまわり
 GAN周りは「GANについて概念から実装まで　～DCGANによるキルミーベイベー生成～」のプログラムを使用しました。
 
 コメント欄で作者のtaku-buntuさんに確認したところ、MITライセンスを導入予定とのことです。
@@ -57,7 +58,7 @@ https://github.com/taku-buntu/Keras-DCGAN-killmebaby
 
 dcgan.pyから生成に必要な部分だけ抽出したものがdcgan_slim.pyです。
 
-##ganmodels/dcgan-cat.h5の生成
+## ganmodels/dcgan-cat.h5の生成
 
 ganmodels/dcgan-cat.h5の生成も試したい場合は
 ```
@@ -67,7 +68,7 @@ $ python3 ./dcgan.py
 
 
 
-#「こねこたくさん」の説明文
+# 「こねこたくさん」の説明文
 
 親猫から親猫に似た子猫が子猫が次々と生まれます。
 
