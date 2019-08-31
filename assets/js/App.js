@@ -548,6 +548,9 @@ export default class App{
     if(e.key==" "){
       this.setNextGameState(new GameStateStart(this));
     }
+    if(e.key.toUpperCase()=="Z"){
+      document.exitPointerLock();
+    }
   }
   onMousemove(e){
     let {originalEvent}=e;
