@@ -35,6 +35,7 @@ $ deactivate
 ```
 $ source venv/bin/activate
 $ python3 ./main.py
+$ deactivate
 ```
 
 * http://localhost:5000 をChromeで開く
@@ -58,12 +59,14 @@ dcgan.pyから生成に必要な部分だけ抽出したものがdcgan_slim.py�
 
 ## ganmodels/dcgan-cat.h5の生成
 
-ganmodels/dcgan-cat.h5の生成も試したい場合は
-```
-$ python3 ./dcgan.py
-```
-でできるはずです。（あとでちゃんと確認しておきます。）
 
+### 実行
+```
+$ source venv/bin/activate
+$ python3 ./dcgan.py
+$ deactivate
+```
+ganmodels/dcgan-*-iter.h5 の一番数字が大きいファイルをganmodels/dcgan-cat.h5にリネームする。
 
 
 # 「こねこたくさん」の説明文

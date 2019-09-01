@@ -1,6 +1,7 @@
 #MITライセンスとのことなので、改変して使わせていただきました。
 #https://qiita.com/taku-buntu/items/0093a68bfae0b0ff879d
 #https://github.com/taku-buntu/Keras-DCGAN-killmebaby
+#train用
 
 from keras.layers import Input, Dense, Reshape, Flatten, Dropout
 from keras.layers import BatchNormalization, Activation, ZeroPadding2D
@@ -16,7 +17,6 @@ import matplotlib.pyplot as plt
 import os
 import cv2
 import numpy as np
-import rarfile as rar
 from pathlib import Path
 
 np.random.seed(0)
@@ -27,7 +27,6 @@ config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
 session = tf.Session(config=config)
 tensorflow_backend.set_session(session)
 
-#root_dir = str(Path('kill_me_baby_datasets').resolve())
 root_dir = str(Path('cat_datasets').resolve())
 
 class DCGAN():
@@ -193,7 +192,7 @@ class DCGAN():
                 axs[i, j].imshow(gen_imgs[cnt, :, :, :])
                 axs[i, j].axis('off')
                 cnt += 1
-        fig.savefig('images/gen_imgs/kill_me_%d.png' % iteration)
+        fig.savefig('images/gen_imgs/cat_%d.png' % iteration)
 
         plt.close()
 
@@ -259,9 +258,6 @@ class DCGAN():
 
 
 if __name__ == '__main__':
-    datarar = rar.RarFile('kill_me_baby_datasets.rar')
-    datarar.extractall()
-
     dcgan = DCGAN()
     r, c = 5, 5
     check_noise = np.random.uniform(-1, 1, (r * c, 100))
