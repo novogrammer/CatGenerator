@@ -57,6 +57,16 @@ https://github.com/taku-buntu/Keras-DCGAN-killmebaby
 
 dcgan.pyから生成に必要な部分だけ抽出したものがdcgan_slim.pyです。
 
+# 使用猫データセット
+
+以下のデータセットを使用。
+
+https://www.kaggle.com/crawford/cat-dataset
+
+
+https://github.com/theblackcat102/keras-cat-gan
+からpreprocess_cat_dataset.pyを拝借して実行。横顔など、今回の用途に不向きなファイルを手動で削除しておく。
+
 ## ganmodels/dcgan-cat.h5の生成
 
 
